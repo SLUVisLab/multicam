@@ -27,6 +27,8 @@ final class CameraModel: ObservableObject {
     
     var session: AVCaptureSession
     
+    var timer = Timer()
+    
     private var subscriptions = Set<AnyCancellable>()
     
     init() {
@@ -53,6 +55,7 @@ final class CameraModel: ObservableObject {
             self?.willCapturePhoto = val
         }
         .store(in: &self.subscriptions)
+        
     }
     
     func configure() {
@@ -62,6 +65,25 @@ final class CameraModel: ObservableObject {
     
     func capturePhoto() {
         service.capturePhoto()
+    }
+    
+    func startTimedCapture() {
+        isActive = true
+        timer = Timer(timeInterval: 1.0, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+        RunLoop.current.add(timer, forMode: RunLoop.Mode.common)
+        timer.tolerance = 0.2
+        
+    }
+    
+    @objc func timerAction() {
+        print("timer interval")
+        capturePhoto()
+    }
+    
+    func stopTimedCapture() {
+        isActive = false
+        print("timer stopped")
+        timer.invalidate()
     }
     
 //    func flipCamera() {
@@ -103,7 +125,7 @@ struct CameraView: View {
                     // if camera.isActive show stop button
                     if camera.isActive{
                         
-                        Button(action: {camera.isActive.toggle()}, label: {
+                        Button(action: {camera.stopTimedCapture()}, label: {
                             ZStack{
                                 Circle()
                                     .fill(Color.red)
@@ -152,7 +174,7 @@ struct CameraView: View {
                                 )
                                 .animation(.easeInOut)
                             
-                            Button(action: {camera.capturePhoto()}, label: {
+                            Button(action: {camera.startTimedCapture()}, label: {
                                 ZStack{
                                     Circle()
                                         .fill(Color.white)
