@@ -13,7 +13,6 @@
 		D717655D273087ED004D38F3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D717655C273087ED004D38F3 /* Preview Assets.xcassets */; };
 		D7176564273088E1004D38F3 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7176563273088E1004D38F3 /* CameraView.swift */; };
 		D717656627308A0A004D38F3 /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717656527308A0A004D38F3 /* GalleryView.swift */; };
-		D71765682731B2B1004D38F3 /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D71765672731B2B1004D38F3 /* CameraController.swift */; };
 		D717656C273AF64C004D38F3 /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717656B273AF64C004D38F3 /* Capture.swift */; };
 		D717656E2744091D004D38F3 /* CameraService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717656D2744091D004D38F3 /* CameraService.swift */; };
 		D7176570274416CC004D38F3 /* PhotoCaptureProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717656F274416CC004D38F3 /* PhotoCaptureProcessor.swift */; };
@@ -30,7 +29,6 @@
 		D717655C273087ED004D38F3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D7176563273088E1004D38F3 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		D717656527308A0A004D38F3 /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
-		D71765672731B2B1004D38F3 /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		D717656B273AF64C004D38F3 /* Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capture.swift; sourceTree = "<group>"; };
 		D717656D2744091D004D38F3 /* CameraService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraService.swift; sourceTree = "<group>"; };
 		D717656F274416CC004D38F3 /* PhotoCaptureProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureProcessor.swift; sourceTree = "<group>"; };
@@ -77,7 +75,6 @@
 				D7176571274417D5004D38F3 /* CameraService+Enums.swift */,
 				D7176563273088E1004D38F3 /* CameraView.swift */,
 				D717656D2744091D004D38F3 /* CameraService.swift */,
-				D71765672731B2B1004D38F3 /* CameraController.swift */,
 				D717657327441CAE004D38F3 /* CameraPreview.swift */,
 				D717656F274416CC004D38F3 /* PhotoCaptureProcessor.swift */,
 				D717656B273AF64C004D38F3 /* Capture.swift */,
@@ -178,7 +175,6 @@
 				D7176570274416CC004D38F3 /* PhotoCaptureProcessor.swift in Sources */,
 				D717657427441CAE004D38F3 /* CameraPreview.swift in Sources */,
 				D717656627308A0A004D38F3 /* GalleryView.swift in Sources */,
-				D71765682731B2B1004D38F3 /* CameraController.swift in Sources */,
 				D717656E2744091D004D38F3 /* CameraService.swift in Sources */,
 				D7176572274417D5004D38F3 /* CameraService+Enums.swift in Sources */,
 			);

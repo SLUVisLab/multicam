@@ -72,7 +72,6 @@ final class CameraModel: ObservableObject {
         timer = Timer(timeInterval: 1.0, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
         RunLoop.current.add(timer, forMode: RunLoop.Mode.common)
         timer.tolerance = 0.2
-        
     }
     
     @objc func timerAction() {
@@ -168,7 +167,7 @@ struct CameraView: View {
                                 .overlay(
                                     Group {
                                         if camera.willCapturePhoto {
-                                            Color.green
+                                            Color.black
                                         }
                                     }
                                 )
@@ -201,6 +200,3 @@ struct CameraView_Previews: PreviewProvider {
     }
 }
 
-//class CameraState: ObservableObject {
-//    @Published var isActive = false
-//}

@@ -25,6 +25,11 @@ struct DateGrouping: Identifiable {
 }
 
 struct CaptureList {
+    static let resourceNames = [
+       "ECABE30F-64CA-4B94-A319-8FC6442C6077/L0/001",
+       "FA8CC18A-DBE3-40EB-A309-632B9B7461BE/L0/001",
+       "40BD42E1-9CD0-4B7C-A1B8-A113366B14B5/L0/001"
+    ]
     static let recent = [
         DateGrouping (
             date : "Friday Nov. 11, 2021",

@@ -75,20 +75,25 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
         if let error = error {
             print("Error capturing photo: \(error)")
         } else {
+
             photoData = photo.fileDataRepresentation()
+
         }
     }
     
     //        MARK: Saves capture to photo library
     func saveToPhotoLibrary(_ photoData: Data) {
-        
+        var newImageIdentifier: String!
         PHPhotoLibrary.requestAuthorization { status in
             if status == .authorized {
                 PHPhotoLibrary.shared().performChanges({
                     let options = PHAssetResourceCreationOptions()
                     let creationRequest = PHAssetCreationRequest.forAsset()
+                    newImageIdentifier = creationRequest.placeholderForCreatedAsset!.localIdentifier
                     options.uniformTypeIdentifier = self.requestedPhotoSettings.processedFileType.map { $0.rawValue }
                     creationRequest.addResource(with: .photo, data: photoData, options: options)
+                    
+                    print(newImageIdentifier)
                     
                     
                 }, completionHandler: { _, error in
