@@ -27,12 +27,15 @@ final class CameraModel: ObservableObject {
     
     var session: AVCaptureSession
     
+    var dataService: DataService
+    
     var timer = Timer()
     
     private var subscriptions = Set<AnyCancellable>()
     
     init() {
         self.session = service.session
+        self.dataService = DataService()
         
         service.$photo.sink { [weak self] (photo) in
             guard let pic = photo else { return }
@@ -64,25 +67,29 @@ final class CameraModel: ObservableObject {
     }
     
     func capturePhoto() {
-        service.capturePhoto()
+        service.capturePhoto(dataService: self.dataService)
     }
     
     func startTimedCapture() {
         isActive = true
+        self.dataService.start()
         timer = Timer(timeInterval: 1.0, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
         RunLoop.current.add(timer, forMode: RunLoop.Mode.common)
         timer.tolerance = 0.2
     }
     
     @objc func timerAction() {
-        print("timer interval")
         capturePhoto()
     }
     
     func stopTimedCapture() {
         isActive = false
-        print("timer stopped")
         timer.invalidate()
+        for ident in self.dataService.photoCollection!.localIdentifiers {
+            print(ident)
+        }
+        
+        self.dataService.save(siteId: 23, blockId: 9)
     }
     
 //    func flipCamera() {

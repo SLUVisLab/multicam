@@ -7,7 +7,18 @@
 
 import SwiftUI
 
+final class ContentModel: ObservableObject {
+    
+    var dataService: DataService
+ 
+    init() {
+        self.dataService = DataService()
+    }
+}
+
 struct ContentView: View {
+    @StateObject var content = ContentModel()
+    
     var body: some View {
         NavigationView{
             VStack{
@@ -28,6 +39,11 @@ struct ContentView: View {
                         .background(Color.green)
                         .foregroundColor(Color.white)
                         .cornerRadius(10)
+                }
+                
+                Button(action: {content.dataService.deleteAll()}) {
+                    Text(verbatim: "Clear Database")
+                        .foregroundColor(.black)
                 }
             }
         }

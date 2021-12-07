@@ -305,7 +305,7 @@ public class CameraService {
     //    MARK: Capture Photo
         
     /// - Tag: CapturePhoto
-    public func capturePhoto() {
+    public func capturePhoto(dataService: DataService) {
         if self.setupResult != .configurationFailed {
             self.isCameraButtonDisabled = true
             
@@ -334,7 +334,7 @@ public class CameraService {
                 
                 photoSettings.photoQualityPrioritization = .quality
                 
-                let photoCaptureProcessor = PhotoCaptureProcessor(with: photoSettings
+                let photoCaptureProcessor = PhotoCaptureProcessor(with: dataService, requestedPhotoSettings: photoSettings,
                                                                   
 //                    willCapturePhotoAnimation: { [weak self] in
 //                    // Tells the UI to flash the screen to signal that SwiftCamera took a photo.
@@ -347,7 +347,7 @@ public class CameraService {
 //                    }
 //
 //                    }
-                    , completionHandler: { [weak self] (photoCaptureProcessor) in
+                    completionHandler: { [weak self] (photoCaptureProcessor) in
                     // When the capture is complete, remove a reference to the photo capture delegate so it can be deallocated.
                     if let data = photoCaptureProcessor.photoData {
                         self?.photo = Photo(originalData: data)

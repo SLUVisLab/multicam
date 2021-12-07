@@ -13,12 +13,15 @@
 		D717655D273087ED004D38F3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D717655C273087ED004D38F3 /* Preview Assets.xcassets */; };
 		D7176564273088E1004D38F3 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7176563273088E1004D38F3 /* CameraView.swift */; };
 		D717656627308A0A004D38F3 /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717656527308A0A004D38F3 /* GalleryView.swift */; };
-		D717656C273AF64C004D38F3 /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717656B273AF64C004D38F3 /* Capture.swift */; };
 		D717656E2744091D004D38F3 /* CameraService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717656D2744091D004D38F3 /* CameraService.swift */; };
 		D7176570274416CC004D38F3 /* PhotoCaptureProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717656F274416CC004D38F3 /* PhotoCaptureProcessor.swift */; };
 		D7176572274417D5004D38F3 /* CameraService+Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7176571274417D5004D38F3 /* CameraService+Enums.swift */; };
 		D717657427441CAE004D38F3 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717657327441CAE004D38F3 /* CameraPreview.swift */; };
 		D76D6C4D27443C3A005BB13F /* ActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = D76D6C4C27443C3A005BB13F /* ActivityIndicatorView */; };
+		D7EE919E275E675E002EA1A3 /* PhotoCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7EE919D275E675E002EA1A3 /* PhotoCaptureSession.swift */; };
+		D7EE91A1275E6CE7002EA1A3 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = D7EE91A0275E6CE7002EA1A3 /* Realm */; };
+		D7EE91A3275E6CE7002EA1A3 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D7EE91A2275E6CE7002EA1A3 /* RealmSwift */; };
+		D7EE91A5275E7886002EA1A3 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7EE91A4275E7886002EA1A3 /* DataService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,12 +32,13 @@
 		D717655C273087ED004D38F3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D7176563273088E1004D38F3 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		D717656527308A0A004D38F3 /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
-		D717656B273AF64C004D38F3 /* Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capture.swift; sourceTree = "<group>"; };
 		D717656D2744091D004D38F3 /* CameraService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraService.swift; sourceTree = "<group>"; };
 		D717656F274416CC004D38F3 /* PhotoCaptureProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureProcessor.swift; sourceTree = "<group>"; };
 		D7176571274417D5004D38F3 /* CameraService+Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraService+Enums.swift"; sourceTree = "<group>"; };
 		D717657327441CAE004D38F3 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		D76D6C4E274EB23E005BB13F /* bii-multi-pheno-cam-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "bii-multi-pheno-cam-Info.plist"; sourceTree = SOURCE_ROOT; };
+		D7EE919D275E675E002EA1A3 /* PhotoCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureSession.swift; sourceTree = "<group>"; };
+		D7EE91A4275E7886002EA1A3 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +46,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7EE91A3275E6CE7002EA1A3 /* RealmSwift in Frameworks */,
+				D7EE91A1275E6CE7002EA1A3 /* Realm in Frameworks */,
 				D76D6C4D27443C3A005BB13F /* ActivityIndicatorView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -73,11 +79,12 @@
 				D7176557273087EB004D38F3 /* ContentView.swift */,
 				D7176559273087ED004D38F3 /* Assets.xcassets */,
 				D7176571274417D5004D38F3 /* CameraService+Enums.swift */,
+				D7EE919D275E675E002EA1A3 /* PhotoCaptureSession.swift */,
 				D7176563273088E1004D38F3 /* CameraView.swift */,
+				D7EE91A4275E7886002EA1A3 /* DataService.swift */,
 				D717656D2744091D004D38F3 /* CameraService.swift */,
 				D717657327441CAE004D38F3 /* CameraPreview.swift */,
 				D717656F274416CC004D38F3 /* PhotoCaptureProcessor.swift */,
-				D717656B273AF64C004D38F3 /* Capture.swift */,
 				D717656527308A0A004D38F3 /* GalleryView.swift */,
 				D717655B273087ED004D38F3 /* Preview Content */,
 			);
@@ -110,6 +117,8 @@
 			name = bii_multi_pheno_cam;
 			packageProductDependencies = (
 				D76D6C4C27443C3A005BB13F /* ActivityIndicatorView */,
+				D7EE91A0275E6CE7002EA1A3 /* Realm */,
+				D7EE91A2275E6CE7002EA1A3 /* RealmSwift */,
 			);
 			productName = bii_multi_pheno_cam;
 			productReference = D7176552273087EB004D38F3 /* bii_multi_pheno_cam.app */;
@@ -141,6 +150,7 @@
 			mainGroup = D7176549273087EB004D38F3;
 			packageReferences = (
 				D76D6C4B27443C3A005BB13F /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */,
+				D7EE919F275E6CE7002EA1A3 /* XCRemoteSwiftPackageReference "realm-cocoa" */,
 			);
 			productRefGroup = D7176553273087EB004D38F3 /* Products */;
 			projectDirPath = "";
@@ -168,14 +178,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D717656C273AF64C004D38F3 /* Capture.swift in Sources */,
 				D7176564273088E1004D38F3 /* CameraView.swift in Sources */,
 				D7176558273087EB004D38F3 /* ContentView.swift in Sources */,
 				D7176556273087EB004D38F3 /* bii_multi_pheno_camApp.swift in Sources */,
 				D7176570274416CC004D38F3 /* PhotoCaptureProcessor.swift in Sources */,
+				D7EE91A5275E7886002EA1A3 /* DataService.swift in Sources */,
 				D717657427441CAE004D38F3 /* CameraPreview.swift in Sources */,
 				D717656627308A0A004D38F3 /* GalleryView.swift in Sources */,
 				D717656E2744091D004D38F3 /* CameraService.swift in Sources */,
+				D7EE919E275E675E002EA1A3 /* PhotoCaptureSession.swift in Sources */,
 				D7176572274417D5004D38F3 /* CameraService+Enums.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -401,6 +412,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		D7EE919F275E6CE7002EA1A3 /* XCRemoteSwiftPackageReference "realm-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-cocoa.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.19.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -408,6 +427,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D76D6C4B27443C3A005BB13F /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */;
 			productName = ActivityIndicatorView;
+		};
+		D7EE91A0275E6CE7002EA1A3 /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D7EE919F275E6CE7002EA1A3 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
+			productName = Realm;
+		};
+		D7EE91A2275E6CE7002EA1A3 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D7EE919F275E6CE7002EA1A3 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
+			productName = RealmSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
