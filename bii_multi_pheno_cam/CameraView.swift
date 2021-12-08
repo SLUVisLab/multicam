@@ -109,6 +109,10 @@ struct CameraView: View {
 //    @StateObject var camera = CameraState()
     @StateObject var camera = CameraModel()
     @State var currentZoomFactor: CGFloat = 1.0
+    @State private var selectedSite = "1501"
+    let siteIds = ["1342", "3220", "1501"]
+    @State private var selectedBlock = "4"
+    let blockIds = ["1", "2", "3", "4", "5", "6", "7"]
     
     var body: some View {
         ZStack{
@@ -126,11 +130,12 @@ struct CameraView: View {
             }
             
             VStack{
-                Spacer()
-                HStack{
+                
+//                Spacer()
+//                HStack{
                     // if camera.isActive show stop button
                     if camera.isActive{
-                        
+                        Spacer()
                         Button(action: {camera.stopTimedCapture()}, label: {
                             ZStack{
                                 Circle()
@@ -144,7 +149,31 @@ struct CameraView: View {
                         })
                         
                     } else {
-                        VStack{
+                        Form {
+                            Picker("Site ID", selection: $selectedSite) {
+                                ForEach(siteIds, id: \.self) {
+                                    Text($0)
+                                }
+                            }
+                            Picker("Block ID", selection: $selectedBlock) {
+                                ForEach(blockIds, id: \.self) {
+                                    Text($0)
+                                }
+                            }
+                        }
+                        .frame(height: 100)
+                        .background(Color.black)
+                        .onAppear {
+                          UITableView.appearance().backgroundColor = .clear
+                        }
+                        .onDisappear {
+                          UITableView.appearance().backgroundColor = .clear
+                        }
+//                        .padding(.top, 1)
+                        
+                        
+//                        VStack{
+                            
                             CameraPreview(session: camera.session)
     //                            .gesture(
     //                                DragGesture().onChanged({ (val) in
@@ -191,11 +220,11 @@ struct CameraView: View {
                                         .frame(width: 75, height: 75)
                                 }
                             })
-                        }
+//                        }
                     }
                     
 
-                }
+//                }
             }
         }
     }

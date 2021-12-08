@@ -22,6 +22,7 @@
 		D7EE91A1275E6CE7002EA1A3 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = D7EE91A0275E6CE7002EA1A3 /* Realm */; };
 		D7EE91A3275E6CE7002EA1A3 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D7EE91A2275E6CE7002EA1A3 /* RealmSwift */; };
 		D7EE91A5275E7886002EA1A3 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7EE91A4275E7886002EA1A3 /* DataService.swift */; };
+		D7EE91A7275FF923002EA1A3 /* UploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7EE91A6275FF923002EA1A3 /* UploadService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		D76D6C4E274EB23E005BB13F /* bii-multi-pheno-cam-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "bii-multi-pheno-cam-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D7EE919D275E675E002EA1A3 /* PhotoCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureSession.swift; sourceTree = "<group>"; };
 		D7EE91A4275E7886002EA1A3 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
+		D7EE91A6275FF923002EA1A3 /* UploadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +84,7 @@
 				D7EE919D275E675E002EA1A3 /* PhotoCaptureSession.swift */,
 				D7176563273088E1004D38F3 /* CameraView.swift */,
 				D7EE91A4275E7886002EA1A3 /* DataService.swift */,
+				D7EE91A6275FF923002EA1A3 /* UploadService.swift */,
 				D717656D2744091D004D38F3 /* CameraService.swift */,
 				D717657327441CAE004D38F3 /* CameraPreview.swift */,
 				D717656F274416CC004D38F3 /* PhotoCaptureProcessor.swift */,
@@ -185,6 +188,7 @@
 				D7EE91A5275E7886002EA1A3 /* DataService.swift in Sources */,
 				D717657427441CAE004D38F3 /* CameraPreview.swift in Sources */,
 				D717656627308A0A004D38F3 /* GalleryView.swift in Sources */,
+				D7EE91A7275FF923002EA1A3 /* UploadService.swift in Sources */,
 				D717656E2744091D004D38F3 /* CameraService.swift in Sources */,
 				D7EE919E275E675E002EA1A3 /* PhotoCaptureSession.swift in Sources */,
 				D7176572274417D5004D38F3 /* CameraService+Enums.swift in Sources */,
