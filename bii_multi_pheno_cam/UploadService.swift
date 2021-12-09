@@ -15,7 +15,7 @@ public class UploadService {
     }
     
     func processCaptureSessions(sessions: Set<ObjectId>) {
-        
+        print("processCaptureSessions Called")
         for session in sessions {
             print("\(session)")
         }

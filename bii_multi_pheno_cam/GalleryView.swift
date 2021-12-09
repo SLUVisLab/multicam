@@ -10,8 +10,11 @@ import Photos
 import RealmSwift
 
 final class GalleryModel: ObservableObject {
-
-    @State var selection = Set<ObjectId>()
+    @Published var selection = Set<ObjectId>()
+//    @State var selection = Set<ObjectId>()
+//    @Published var isEditing: Bool = false
+    @Published var editMode: EditMode = .inactive
+    
     
     let realm = try! Realm()
     var results: Results<PhotoCaptureSession>
@@ -58,7 +61,7 @@ final class GalleryModel: ObservableObject {
                 print("Error: Unable to find PHAsset with matching local identifier")
             }
         } else {
-            print("Error: Empty local identifier for PHAsset")
+            print("Error: Empty local identifier for PHAsset. Using placeholder instead")
         }
         return thumbnail!
     }
@@ -68,6 +71,8 @@ struct GalleryView: View {
 
     @StateObject var gallery = GalleryModel()
     let dateFormatter: DateFormatter
+//    @State var isEditing: Bool = false
+    
         
     init() {
         dateFormatter = DateFormatter()
@@ -106,23 +111,43 @@ struct GalleryView: View {
 
             }
         }
+            
             .navigationTitle("Gallery")
             .toolbar{
                 // TODO: customize edit button so its text says "select"
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
+//                    EditButton()
+                    Button(action: {
+                        if gallery.editMode == .active {
+                            gallery.editMode = .inactive
+                        } else {
+                            gallery.editMode = .active
+                        }
+                    }) {
+                        if gallery.editMode == .active {
+                            Text("Done")
+                        } else {
+                            Text("Select")
+                        }
+                    }
                 }
                 ToolbarItemGroup(placement: .bottomBar) {
-                    Button("Upload") {
-                        print("Upload")
-                        gallery.uploadService.processCaptureSessions(sessions: gallery.selection)
-                    }
+                    if gallery.editMode == .active {
+                        Button("Upload") {
+                            print("Upload")
+                            print(gallery.selection)
+                            print(gallery.selection.count)
+                            gallery.uploadService.processCaptureSessions(sessions: gallery.selection)
+                        }
 
-                    Button("Delete") {
-                        print("Delete")
+                        Button("Delete") {
+                            print("Delete")
+                        }
                     }
                 }
             }
+            .environment(\.editMode, $gallery.editMode)
+            
     }
 }
 
