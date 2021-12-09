@@ -92,21 +92,13 @@ final class CameraModel: ObservableObject {
         self.dataService.save(siteId: 23, blockId: 9)
     }
     
-//    func flipCamera() {
-//        service.changeCamera()
-//    }
-//
-//    func zoom(with factor: CGFloat) {
-//        service.set(zoom: factor)
-//    }
-    
     func switchFlash() {
         service.flashMode = service.flashMode == .on ? .off : .on
     }
 }
 
 struct CameraView: View {
-//    @StateObject var camera = CameraState()
+
     @StateObject var camera = CameraModel()
     @State var currentZoomFactor: CGFloat = 1.0
     @State private var selectedSite = "1501"

@@ -33,7 +33,6 @@ class PhotoCaptureProcessor: NSObject {
     init(with dataService: DataService, requestedPhotoSettings: AVCapturePhotoSettings, completionHandler: @escaping (PhotoCaptureProcessor) -> Void, photoProcessingHandler: @escaping (Bool) -> Void) {
         self.dataService = dataService
         self.requestedPhotoSettings = requestedPhotoSettings
-        //self.willCapturePhotoAnimation = willCapturePhotoAnimation
         self.completionHandler = completionHandler
         self.photoProcessingHandler = photoProcessingHandler
     }
@@ -85,18 +84,15 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
     
     //        MARK: Saves capture to photo library
     func saveToPhotoLibrary(_ photoData: Data) {
-//        var newImageIdentifier: String!
         PHPhotoLibrary.requestAuthorization { status in
             if status == .authorized {
                 PHPhotoLibrary.shared().performChanges({
                     let options = PHAssetResourceCreationOptions()
                     let creationRequest = PHAssetCreationRequest.forAsset()
-//                    newImageIdentifier = creationRequest.placeholderForCreatedAsset!.localIdentifier
                     self.dataService.photoCollection?.localIdentifiers.append(creationRequest.placeholderForCreatedAsset!.localIdentifier)
                     options.uniformTypeIdentifier = self.requestedPhotoSettings.processedFileType.map { $0.rawValue }
                     creationRequest.addResource(with: .photo, data: photoData, options: options)
                     
-//                    print(newImageIdentifier)
                     
                     
                 }, completionHandler: { _, error in
