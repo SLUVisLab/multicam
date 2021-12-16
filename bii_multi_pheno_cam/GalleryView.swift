@@ -36,6 +36,7 @@ final class GalleryModel: ObservableObject {
         var thumbnail = UIImage(named: "plot1")
         
         // TODO: This is janky way to handle instances where no photo identifier can be found. Consider refactor
+        // TODO: Consider throwing actual errors or setting up a logger instead of print
         if localIdentfier != "empty" {
             var fetchResults = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentfier], options: nil)
             
@@ -114,8 +115,8 @@ struct GalleryView: View {
             
             .navigationTitle("Gallery")
             .toolbar{
-                // TODO: customize edit button so its text says "select"
                 ToolbarItem(placement: .navigationBarTrailing) {
+                    // EditButton() is the default way to toggle List views in and out of edit mode. The custom implementation of the button allows us to change it's default text to "select" instead of "edit" - not sure if it's worth the hassle. Disable all gallery.editMode related code to restore the simpler version.
 //                    EditButton()
                     Button(action: {
                         if gallery.editMode == .active {
