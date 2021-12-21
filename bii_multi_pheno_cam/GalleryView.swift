@@ -20,12 +20,14 @@ final class GalleryModel: ObservableObject {
     var results: Results<PhotoCaptureSession>
     var sortedResults: Results<PhotoCaptureSession>
     let uploadService : UploadService
+    let dataService: DataService
     
     init() {
 
         self.results = realm.objects(PhotoCaptureSession.self)
         self.sortedResults = results.sorted(byKeyPath: "sessionStart", ascending: false)
         self.uploadService = UploadService()
+        self.dataService = DataService()
 
     }
     
@@ -136,13 +138,17 @@ struct GalleryView: View {
                     if gallery.editMode == .active {
                         Button("Upload") {
                             print("Upload")
-                            print(gallery.selection)
-                            print(gallery.selection.count)
-                            gallery.uploadService.processCaptureSessions(sessions: gallery.selection)
+                            gallery.uploadService.upload(sessionIds: gallery.selection)
+                            gallery.editMode = .inactive
+                            gallery.selection = Set<ObjectId>()
+
                         }
 
                         Button("Delete") {
                             print("Delete")
+                            gallery.dataService.delete(sessions: gallery.selection)
+                            gallery.editMode = .inactive
+                            gallery.selection = Set<ObjectId>()
                         }
                     }
                 }

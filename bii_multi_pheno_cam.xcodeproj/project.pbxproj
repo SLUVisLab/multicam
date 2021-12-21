@@ -20,7 +20,9 @@
 		D76D6C4D27443C3A005BB13F /* ActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = D76D6C4C27443C3A005BB13F /* ActivityIndicatorView */; };
 		D7D68AF1276BC5CE0035811C /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = D7D68AF0276BC5CE0035811C /* Realm */; };
 		D7D68AF3276BC5CE0035811C /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D7D68AF2276BC5CE0035811C /* RealmSwift */; };
-		D7D68AF6276BC7110035811C /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = D7D68AF5276BC7110035811C /* FirebaseStorage */; };
+		D7D68AF827711FE00035811C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D68AF727711FE00035811C /* Extensions.swift */; };
+		D7D68AFB27723E890035811C /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D7D68AFA27723E890035811C /* FirebaseFirestore */; };
+		D7D68AFD27723E890035811C /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = D7D68AFC27723E890035811C /* FirebaseStorage */; };
 		D7EE919E275E675E002EA1A3 /* PhotoCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7EE919D275E675E002EA1A3 /* PhotoCaptureSession.swift */; };
 		D7EE91A5275E7886002EA1A3 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7EE91A4275E7886002EA1A3 /* DataService.swift */; };
 		D7EE91A7275FF923002EA1A3 /* UploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7EE91A6275FF923002EA1A3 /* UploadService.swift */; };
@@ -40,6 +42,7 @@
 		D7176571274417D5004D38F3 /* CameraService+Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraService+Enums.swift"; sourceTree = "<group>"; };
 		D717657327441CAE004D38F3 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		D76D6C4E274EB23E005BB13F /* bii-multi-pheno-cam-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "bii-multi-pheno-cam-Info.plist"; sourceTree = SOURCE_ROOT; };
+		D7D68AF727711FE00035811C /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D7EE919D275E675E002EA1A3 /* PhotoCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureSession.swift; sourceTree = "<group>"; };
 		D7EE91A4275E7886002EA1A3 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		D7EE91A6275FF923002EA1A3 /* UploadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadService.swift; sourceTree = "<group>"; };
@@ -52,8 +55,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7D68AF3276BC5CE0035811C /* RealmSwift in Frameworks */,
-				D7D68AF6276BC7110035811C /* FirebaseStorage in Frameworks */,
+				D7D68AFB27723E890035811C /* FirebaseFirestore in Frameworks */,
 				D7D68AF1276BC5CE0035811C /* Realm in Frameworks */,
+				D7D68AFD27723E890035811C /* FirebaseStorage in Frameworks */,
 				D76D6C4D27443C3A005BB13F /* ActivityIndicatorView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -86,6 +90,7 @@
 				D7176559273087ED004D38F3 /* Assets.xcassets */,
 				D7176571274417D5004D38F3 /* CameraService+Enums.swift */,
 				D7EE919D275E675E002EA1A3 /* PhotoCaptureSession.swift */,
+				D7D68AF727711FE00035811C /* Extensions.swift */,
 				D7176563273088E1004D38F3 /* CameraView.swift */,
 				D7EE91A4275E7886002EA1A3 /* DataService.swift */,
 				D7EE91A82767B692002EA1A3 /* GoogleService-Info.plist */,
@@ -127,7 +132,8 @@
 				D76D6C4C27443C3A005BB13F /* ActivityIndicatorView */,
 				D7D68AF0276BC5CE0035811C /* Realm */,
 				D7D68AF2276BC5CE0035811C /* RealmSwift */,
-				D7D68AF5276BC7110035811C /* FirebaseStorage */,
+				D7D68AFA27723E890035811C /* FirebaseFirestore */,
+				D7D68AFC27723E890035811C /* FirebaseStorage */,
 			);
 			productName = bii_multi_pheno_cam;
 			productReference = D7176552273087EB004D38F3 /* bii_multi_pheno_cam.app */;
@@ -160,7 +166,7 @@
 			packageReferences = (
 				D76D6C4B27443C3A005BB13F /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */,
 				D7D68AEF276BC5CE0035811C /* XCRemoteSwiftPackageReference "realm-cocoa" */,
-				D7D68AF4276BC7110035811C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				D7D68AF927723E890035811C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = D7176553273087EB004D38F3 /* Products */;
 			projectDirPath = "";
@@ -200,6 +206,7 @@
 				D717656E2744091D004D38F3 /* CameraService.swift in Sources */,
 				D7EE919E275E675E002EA1A3 /* PhotoCaptureSession.swift in Sources */,
 				D7176572274417D5004D38F3 /* CameraService+Enums.swift in Sources */,
+				D7D68AF827711FE00035811C /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -432,7 +439,7 @@
 				minimumVersion = 10.19.0;
 			};
 		};
-		D7D68AF4276BC7110035811C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		D7D68AF927723E890035811C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
@@ -458,9 +465,14 @@
 			package = D7D68AEF276BC5CE0035811C /* XCRemoteSwiftPackageReference "realm-cocoa" */;
 			productName = RealmSwift;
 		};
-		D7D68AF5276BC7110035811C /* FirebaseStorage */ = {
+		D7D68AFA27723E890035811C /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D7D68AF4276BC7110035811C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = D7D68AF927723E890035811C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		D7D68AFC27723E890035811C /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D7D68AF927723E890035811C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */

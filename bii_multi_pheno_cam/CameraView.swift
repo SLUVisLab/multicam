@@ -118,105 +118,73 @@ struct CameraView: View {
                     ActivityIndicatorView(isVisible: $camera.isActive, type: .growingCircle)
                         .foregroundColor(.white)
                         .frame(width: 280, height: 280, alignment: .center)
+                    
+                    Spacer()
+                    
+                    Button(action: {camera.stopTimedCapture()}, label: {
+                        ZStack{
+                            Circle()
+                                .fill(Color.red)
+                                .frame(width: 65, height: 65)
+                            
+                            Circle()
+                                .stroke(Color.red, lineWidth: 2)
+                                .frame(width: 75, height: 75)
+                        }
+                    })
                 }
-            }
-            
-            VStack{
+            } else {
+                    
+                CameraPreview(session: camera.session)
+                    .onAppear {
+                        camera.configure()
+                    }
+                    .alert(isPresented: $camera.showAlertError, content: {
+                        Alert(title: Text(camera.alertError.title), message: Text(camera.alertError.message), dismissButton: .default(Text(camera.alertError.primaryButtonTitle), action: {
+                            camera.alertError.primaryAction?()
+                        }))
+                    })
+                    .animation(.easeInOut)
                 
-//                Spacer()
-//                HStack{
-                    // if camera.isActive show stop button
-                    if camera.isActive{
-                        Spacer()
-                        Button(action: {camera.stopTimedCapture()}, label: {
-                            ZStack{
-                                Circle()
-                                    .fill(Color.red)
-                                    .frame(width: 65, height: 65)
-                                
-                                Circle()
-                                    .stroke(Color.red, lineWidth: 2)
-                                    .frame(width: 75, height: 75)
-                            }
-                        })
-                        
-                    } else {
-                        Form {
-                            Picker("Site ID", selection: $selectedSite) {
-                                ForEach(siteIds, id: \.self) {
-                                    Text($0)
-                                }
-                            }
-                            Picker("Block ID", selection: $selectedBlock) {
-                                ForEach(blockIds, id: \.self) {
-                                    Text($0)
-                                }
+                VStack{
+                    
+                    Form {
+                        Picker("Site ID", selection: $selectedSite) {
+                            ForEach(siteIds, id: \.self) {
+                                Text($0)
                             }
                         }
-                        .frame(height: 100)
-                        .background(Color.black)
+                        Picker("Block ID", selection: $selectedBlock) {
+                            ForEach(blockIds, id: \.self) {
+                                Text($0)
+                            }
+                        }
+                    }
+                        .background(Color.clear)
+                        .padding(.top, 1)
                         .onAppear {
                           UITableView.appearance().backgroundColor = .clear
                         }
                         .onDisappear {
                           UITableView.appearance().backgroundColor = .clear
                         }
-//                        .padding(.top, 1)
                         
+                    Spacer()
                         
-//                        VStack{
+                    Button(action: {camera.startTimedCapture()}, label: {
+                        ZStack{
+                            Circle()
+                                .fill(Color.white)
+                                .frame(width: 65, height: 65)
                             
-                            CameraPreview(session: camera.session)
-    //                            .gesture(
-    //                                DragGesture().onChanged({ (val) in
-    //                                    //  Only accept vertical drag
-    //                                    if abs(val.translation.height) > abs(val.translation.width) {
-    //                                        //  Get the percentage of vertical screen space covered by drag
-    //                                        let percentage: CGFloat = -(val.translation.height / reader.size.height)
-    //                                        //  Calculate new zoom factor
-    //                                        let calc = currentZoomFactor + percentage
-    //                                        //  Limit zoom factor to a maximum of 5x and a minimum of 1x
-    //                                        let zoomFactor: CGFloat = min(max(calc, 1), 5)
-    //                                        //  Store the newly calculated zoom factor
-    //                                        currentZoomFactor = zoomFactor
-    //                                        //  Sets the zoom factor to the capture device session
-    //                                        camera.zoom(with: zoomFactor)
-    //                                    }
-    //                                })
-    //                            )
-                                .onAppear {
-                                    camera.configure()
-                                }
-                                .alert(isPresented: $camera.showAlertError, content: {
-                                    Alert(title: Text(camera.alertError.title), message: Text(camera.alertError.message), dismissButton: .default(Text(camera.alertError.primaryButtonTitle), action: {
-                                        camera.alertError.primaryAction?()
-                                    }))
-                                })
-                                .overlay(
-                                    Group {
-                                        if camera.willCapturePhoto {
-                                            Color.black
-                                        }
-                                    }
-                                )
-                                .animation(.easeInOut)
-                            
-                            Button(action: {camera.startTimedCapture()}, label: {
-                                ZStack{
-                                    Circle()
-                                        .fill(Color.white)
-                                        .frame(width: 65, height: 65)
-                                    
-                                    Circle()
-                                        .stroke(Color.white, lineWidth: 2)
-                                        .frame(width: 75, height: 75)
-                                }
-                            })
-//                        }
-                    }
+                            Circle()
+                                .stroke(Color.white, lineWidth: 2)
+                                .frame(width: 75, height: 75)
+                        }
+                    })
+                        .padding(.bottom, 20)
                     
-
-//                }
+                }
             }
         }
     }
