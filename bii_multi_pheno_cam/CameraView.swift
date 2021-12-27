@@ -23,6 +23,10 @@ final class CameraModel: ObservableObject {
     
     @Published var isActive = false
     
+    @Published var selectedBlock = ""
+    
+    @Published var selectedSite = ""
+    
     var alertError: AlertError!
     
     var session: AVCaptureSession
@@ -89,7 +93,7 @@ final class CameraModel: ObservableObject {
             print(ident)
         }
         
-        self.dataService.save(siteId: 23, blockId: 9)
+        self.dataService.save(siteId: Int(self.selectedSite) ?? 0, blockId: Int(self.selectedBlock) ?? 0)
     }
     
     func switchFlash() {
@@ -101,10 +105,11 @@ struct CameraView: View {
 
     @StateObject var camera = CameraModel()
     @State var currentZoomFactor: CGFloat = 1.0
-    @State private var selectedSite = "1501"
-    let siteIds = ["1342", "3220", "1501"]
-    @State private var selectedBlock = "4"
-    let blockIds = ["1", "2", "3", "4", "5", "6", "7"]
+//    @State private var selectedSite = ""
+//    let siteIds = ["1342", "3220", "1501"]
+//    @State private var selectedBlock = ""
+//    let blockIds = ["1", "2", "3", "4", "5", "6", "7"]
+    
     
     var body: some View {
         ZStack{
@@ -134,59 +139,98 @@ struct CameraView: View {
                     })
                 }
             } else {
-                    
-                CameraPreview(session: camera.session)
-                    .onAppear {
-                        camera.configure()
-                    }
-                    .alert(isPresented: $camera.showAlertError, content: {
-                        Alert(title: Text(camera.alertError.title), message: Text(camera.alertError.message), dismissButton: .default(Text(camera.alertError.primaryButtonTitle), action: {
-                            camera.alertError.primaryAction?()
-                        }))
-                    })
-                    .animation(.easeInOut)
                 
-                VStack{
+                ZStack {
                     
-                    Form {
-                        Picker("Site ID", selection: $selectedSite) {
-                            ForEach(siteIds, id: \.self) {
-                                Text($0)
-                            }
-                        }
-                        Picker("Block ID", selection: $selectedBlock) {
-                            ForEach(blockIds, id: \.self) {
-                                Text($0)
-                            }
-                        }
-                    }
-                        .background(Color.clear)
-                        .padding(.top, 1)
+                    CameraPreview(session: camera.session)
                         .onAppear {
-                          UITableView.appearance().backgroundColor = .clear
+                            camera.configure()
                         }
-                        .onDisappear {
-                          UITableView.appearance().backgroundColor = .clear
-                        }
-                        
-                    Spacer()
-                        
-                    Button(action: {camera.startTimedCapture()}, label: {
-                        ZStack{
-                            Circle()
-                                .fill(Color.white)
-                                .frame(width: 65, height: 65)
-                            
-                            Circle()
-                                .stroke(Color.white, lineWidth: 2)
-                                .frame(width: 75, height: 75)
-                        }
-                    })
-                        .padding(.bottom, 20)
+                        .alert(isPresented: $camera.showAlertError, content: {
+                            Alert(title: Text(camera.alertError.title), message: Text(camera.alertError.message), dismissButton: .default(Text(camera.alertError.primaryButtonTitle), action: {
+                                camera.alertError.primaryAction?()
+                            }))
+                        })
+                        .animation(.easeInOut)
+                       // .frame(height: 1000)
+    //                    .ignoresSafeArea(.all)
                     
+                    VStack{
+                        
+                        // the picker view is nicer than these basic text inputs, but more complex to implement
+                        // starting with this and can improve later
+                        
+                        HStack(alignment: .center) {
+                            Text("Site ID:")
+                                .font(.callout)
+                                .bold()
+                            
+                            TextField("Enter site ID...", text: $camera.selectedSite)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .keyboardType(.decimalPad)
+                        }
+                        .padding()
+                        
+                        HStack(alignment: .center) {
+                            Text("Block ID:")
+                                .font(.callout)
+                                .bold()
+                            TextField("Enter block ID...", text: $camera.selectedBlock)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .keyboardType(.decimalPad)
+                        }
+                        .padding()
+                        
+    //                    Form {
+    //                        Picker("Site ID", selection: $selectedSite) {
+    //                            ForEach(siteIds, id: \.self) {
+    //                                Text($0)
+    //                            }
+    //                        }
+    //                        Picker("Block ID", selection: $selectedBlock) {
+    //                            ForEach(blockIds, id: \.self) {
+    //                                Text($0)
+    //                            }
+    //                        }
+    //                    }
+    //                        .background(Color.clear)
+    //                        .padding(.top, 1)
+    //                        .onAppear {
+    //                          UITableView.appearance().backgroundColor = .clear
+    //                        }
+    //                        .onDisappear {
+    //                          UITableView.appearance().backgroundColor = .clear
+    //                        }
+                            
+                        Spacer()
+                            
+                        Button(action: {camera.startTimedCapture()}, label: {
+                            ZStack{
+                                Circle()
+                                    .fill(buttonColor)
+                                    .frame(width: 65, height: 65)
+                                
+                                Circle()
+                                    .stroke(buttonColor, lineWidth: 2)
+                                    .frame(width: 75, height: 75)
+                            }
+                        })
+                            .padding(.bottom, 20)
+                            .disabled(camera.selectedSite.isEmpty || camera.selectedBlock.isEmpty)
+                            
+
+                        
+                    }
                 }
             }
+            
         }
+        .onTapGesture {
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
+                }
+    }
+    var buttonColor: Color {
+        return camera.selectedSite.isEmpty || camera.selectedBlock.isEmpty ? .gray : .white
     }
 }
 

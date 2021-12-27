@@ -21,6 +21,7 @@ final class GalleryModel: ObservableObject {
     var sortedResults: Results<PhotoCaptureSession>
     let uploadService : UploadService
     let dataService: DataService
+//    var dateReference: Date
     
     init() {
 
@@ -28,6 +29,7 @@ final class GalleryModel: ObservableObject {
         self.sortedResults = results.sorted(byKeyPath: "sessionStart", ascending: false)
         self.uploadService = UploadService()
         self.dataService = DataService()
+//        self.dateReference = Date()
 
     }
     
@@ -35,7 +37,7 @@ final class GalleryModel: ObservableObject {
     // TODO: Update thumbail sizes to maintain original aspect ratio
     func getThumbnail(localIdentfier: String) -> UIImage {
         // Initialize to empty image placeholder
-        var thumbnail = UIImage(named: "plot1")
+        var thumbnail = UIImage(named: "missing-image")
         
         // TODO: This is janky way to handle instances where no photo identifier can be found. Consider refactor
         // TODO: Consider throwing actual errors or setting up a logger instead of print
@@ -50,7 +52,7 @@ final class GalleryModel: ObservableObject {
                 let requestOptions = PHImageRequestOptions()
                 requestOptions.isSynchronous = true
                 
-                PHImageManager.default().requestImage(for: fetchResults.object(at: 0) as PHAsset, targetSize: CGSize(width: 100.0, height: 100.0), contentMode: PHImageContentMode.aspectFill, options: requestOptions, resultHandler: { (image, _) in
+                PHImageManager.default().requestImage(for: fetchResults.object(at: 0) as PHAsset, targetSize: CGSize(width: 120.0, height: 120.0), contentMode: PHImageContentMode.aspectFill, options: requestOptions, resultHandler: { (image, _) in
                         if let image = image {
                             // Successfully retrieved thumbnail
                             thumbnail = image
@@ -73,14 +75,21 @@ final class GalleryModel: ObservableObject {
 struct GalleryView: View {
 
     @StateObject var gallery = GalleryModel()
-    let dateFormatter: DateFormatter
+    let timeFormatter: DateFormatter
+//    let shortDateFormatter: DateFormatter
 //    @State var isEditing: Bool = false
+    
     
         
     init() {
-        dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .none
-        dateFormatter.timeStyle = .short
+        timeFormatter = DateFormatter()
+        timeFormatter.dateStyle = .none
+        timeFormatter.timeStyle = .short
+        
+//        shortDateFormatter = DateFormatter()
+//        shortDateFormatter.dateFormat = "E, MMM d"
+        
+//        dateReference = Date()
     }
     
     var body: some View {
@@ -88,11 +97,19 @@ struct GalleryView: View {
         List(gallery.sortedResults, id: \.sessionId, selection: $gallery.selection) {result in
 
             HStack() {
+//
+//                if Calendar.current.dateComponents([.day], from: gallery.dateReference, to: result.sessionStart).day! > 1 {
+//                    Spacer()
+//                    Text(result.sessionStart, formatter: shortDateFormatter)
+//                    gallery.dateReference = result.sessionStart
+//                }
+                
                 // TODO: This is janky way to handle instances where no photo identifier can be found. Consider refactor
                 Image(uiImage: gallery.getThumbnail(localIdentfier: result.photoReferences.first ?? "empty"))
                     .resizable()
-                    .scaledToFit()
-                    .frame(width: 120, height: 70)
+                    //.scaledToFit()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 120)
                     .cornerRadius(4)
                     .padding(.vertical, 4)
 
@@ -102,7 +119,7 @@ struct GalleryView: View {
                         .lineLimit(2)
                         .minimumScaleFactor(0.5)
 
-                    Text(result.sessionStart, formatter: dateFormatter)
+                    Text(result.sessionStart, formatter: timeFormatter)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
 

@@ -53,47 +53,35 @@ public class DataService {
         }
     }
     
-    // TODO: Clean up parameters for delete requests. Several options should be available here
+    // TODO: Clean up parameters for delete requests. Several options could be available here
     func delete(sessions: Set<ObjectId>, assets: PHFetchResult<PHAsset>? = nil) {
         
-        // delete image assets in photo library
-//        if assets != nil {
-//            PHPhotoLibrary.shared().performChanges({
-//                PHAssetChangeRequest.deleteAssets(assets!)
-//            })
-//        } else {
-//
-//        }
-        
         let realm = try! Realm()
-        let sessionz = realm.objects(PhotoCaptureSession.self).filter("sessionId IN %@", sessions)
-        for session in sessionz {
-            var fetchResults = PHAsset.fetchAssets(withLocalIdentifiers: Array(session.photoReferences), options: nil)
-            if fetchResults.count > 0 {
+        let collection = realm.objects(PhotoCaptureSession.self).filter("sessionId IN %@", sessions)
+        var references = [String]()
+        
+        for session in collection {
+            references += Array(session.photoReferences)
+        }
+        
+        let fetchResults = PHAsset.fetchAssets(withLocalIdentifiers: references, options: nil)
+        if fetchResults.count > 0 {
             PHPhotoLibrary.shared().performChanges({
                 PHAssetChangeRequest.deleteAssets(fetchResults)
             })
-            } else {
-                print("Could not locate assets to delete")
-            }
-            
+        } else {
+            print("Could not locate image assets to delete")
         }
-        try! realm.write {
-                            realm.delete(Array(sessionz))
-                        }
-//        for session in sessions {
-//
-//
-//            let photoCaptureSession = realm.object(ofType: PhotoCaptureSession.self, forPrimaryKey: session)
-//            if let photoCaptureSession = photoCaptureSession {
-//                try! realm.write {
-//                    realm.delete(photoCaptureSession)
-//                }
-//            } else {
-//                // TODO: Error could not locate photoCaptureSession with id
-//                print("Error could not locate photoCaptureSession with id")
-//            }
-//        }
+        
+        do {
+            try realm.write {
+                
+                realm.delete(collection)
+            }
+        } catch let error {
+            print("error deleting realm objects: " + error.localizedDescription)
+        }
+
     }
     
 }

@@ -39,6 +39,6 @@ struct CameraPreview: UIViewRepresentable {
 struct CameraPreview_Previews: PreviewProvider {
     static var previews: some View {
         CameraPreview(session: AVCaptureSession())
-            .frame(height: 300)
+            .frame(height: 400)
     }
 }
