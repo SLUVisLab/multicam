@@ -22,6 +22,8 @@ public class UploadService {
     var sessionStop: Date?
     var creationDate: Date?
     var url: URL?
+    @Published var isUploading: Bool
+    @Published var statusMessage: String
     
     
     init() {
@@ -33,10 +35,13 @@ public class UploadService {
         sessionStop = nil
         creationDate = nil
         url = nil
+        isUploading = false
+        statusMessage = ""
     }
     
     func upload(sessionIds: Set<ObjectId>) {
-        
+        self.isUploading = true
+        self.statusMessage = "Uploading..."
         let realm = try! Realm()
         let storage = Storage.storage() // this is a reference to firebase cloud storage service
         let db = Firestore.firestore() // this is our reference to the firestore database
@@ -45,6 +50,7 @@ public class UploadService {
         
         let sessions = realm.objects(PhotoCaptureSession.self).filter("sessionId IN %@", sessionIds)
         
+        //TODO: Simple refactor here to reduce fetch asset calls inside this for loop
         for session in sessions {
             self.sessionId = UUID()
             print(self.sessionId)
@@ -99,9 +105,12 @@ public class UploadService {
                                             "url" : self.url!.absoluteString
                                         ]) { err in
                                             if let err = err {
-                                                //TODO: Error retrieving jpeg url
-                                                print("Error retrieving jpeg url")
+                                                //TODO: Error writing to firestore
+                                                print("Error writing to firestore")
                                                 print(err)
+                                                self.isUploading = false
+                                                self.statusMessage = "Error writing to firestore"
+                                                
                                             } else {
                                                 // Successfully wrote document to firestore
                                                 print("Successfully wrote document to firestore!")
@@ -114,6 +123,8 @@ public class UploadService {
                             } else {
                                 // TODO: Error retrieving image from photos
                                 print("Error: Unable to retrieve PHAsset for upload")
+                                self.isUploading = false
+                                self.statusMessage = "Error: Unable to retrieve PHAsset for upload"
                             }
                         }
                     )
@@ -121,10 +132,9 @@ public class UploadService {
             } else {
                 // TODO: Error fetching PHAsset with local identifier
                 print("Error: Unable to find PHAsset with matching local identifier")
+                self.isUploading = false
+                self.statusMessage = "Error: Unable to find PHAsset with matching local identifier"
             }
-            // TODO: Delete Code Goes Here-ish
-            // self.dataService.delete(sessions: sessionIds, assets: fetchResults)
-            
         }
     }
 }

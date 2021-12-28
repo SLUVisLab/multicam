@@ -19,9 +19,10 @@ final class GalleryModel: ObservableObject {
     let realm = try! Realm()
     var results: Results<PhotoCaptureSession>
     var sortedResults: Results<PhotoCaptureSession>
-    let uploadService : UploadService
+    @Published var uploadService : UploadService
     let dataService: DataService
 //    var dateReference: Date
+    let isUploading: Bool
     
     init() {
 
@@ -30,6 +31,7 @@ final class GalleryModel: ObservableObject {
         self.uploadService = UploadService()
         self.dataService = DataService()
 //        self.dateReference = Date()
+        self.isUploading = true
 
     }
     
@@ -93,45 +95,65 @@ struct GalleryView: View {
     }
     
     var body: some View {
+        ZStack {
+            List(gallery.sortedResults, id: \.sessionId, selection: $gallery.selection) {result in
 
-        List(gallery.sortedResults, id: \.sessionId, selection: $gallery.selection) {result in
+                HStack() {
+    //
+    //                if Calendar.current.dateComponents([.day], from: gallery.dateReference, to: result.sessionStart).day! > 1 {
+    //                    Spacer()
+    //                    Text(result.sessionStart, formatter: shortDateFormatter)
+    //                    gallery.dateReference = result.sessionStart
+    //                }
+                    
+                    // TODO: This is janky way to handle instances where no photo identifier can be found. Consider refactor
+                    Image(uiImage: gallery.getThumbnail(localIdentfier: result.photoReferences.first ?? "empty"))
+                        .resizable()
+                        //.scaledToFit()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 120)
+                        .cornerRadius(4)
+                        .padding(.vertical, 4)
 
-            HStack() {
-//
-//                if Calendar.current.dateComponents([.day], from: gallery.dateReference, to: result.sessionStart).day! > 1 {
-//                    Spacer()
-//                    Text(result.sessionStart, formatter: shortDateFormatter)
-//                    gallery.dateReference = result.sessionStart
-//                }
-                
-                // TODO: This is janky way to handle instances where no photo identifier can be found. Consider refactor
-                Image(uiImage: gallery.getThumbnail(localIdentfier: result.photoReferences.first ?? "empty"))
-                    .resizable()
-                    //.scaledToFit()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 120)
-                    .cornerRadius(4)
-                    .padding(.vertical, 4)
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(verbatim: "Block " + String(result.blockId))
+                            .fontWeight(.semibold)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.5)
 
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(verbatim: "Block " + String(result.blockId))
-                        .fontWeight(.semibold)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.5)
+                        Text(result.sessionStart, formatter: timeFormatter)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
 
-                    Text(result.sessionStart, formatter: timeFormatter)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        Text(String(result.photoReferences.count) + " images")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
 
-                    Text(String(result.photoReferences.count) + " images")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                    }
 
                 }
-
+            }
+            
+            if gallery.uploadService.isUploading {
+                UploadingView()
+//                ZStack {
+//
+//                    Color(.white)
+//                        .ignoresSafeArea()
+//                        .opacity(0.8)
+//
+//                    VStack{
+//
+//                        ProgressView()
+//                            .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+//                            .scaleEffect(5)
+//
+//                        Text("Uploading...")
+//
+//                    }
+//                }
             }
         }
-            
             .navigationTitle("Gallery")
             .toolbar{
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -140,6 +162,7 @@ struct GalleryView: View {
                     Button(action: {
                         if gallery.editMode == .active {
                             gallery.editMode = .inactive
+                            gallery.selection = Set<ObjectId>()
                         } else {
                             gallery.editMode = .active
                         }
@@ -180,5 +203,27 @@ struct GalleryView_Previews: PreviewProvider {
         Group {
             GalleryView()
         }
+    }
+}
+
+struct UploadingView: View {
+    var body: some View {
+        ZStack {
+            
+            Color(.white)
+                .ignoresSafeArea()
+                .opacity(0.8)
+            
+            VStack{
+                
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                    .scaleEffect(3)
+                    .padding()
+                Text("Uploading...")
+                
+            }
+        }
+        
     }
 }
