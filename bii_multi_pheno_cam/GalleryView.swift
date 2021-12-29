@@ -19,19 +19,20 @@ final class GalleryModel: ObservableObject {
     let realm = try! Realm()
     var results: Results<PhotoCaptureSession>
     var sortedResults: Results<PhotoCaptureSession>
-    @Published var uploadService : UploadService
+    
+    // TODO: refactor data service out of gellerymodel and instantiate it in the view
     let dataService: DataService
 //    var dateReference: Date
-    let isUploading: Bool
+    //let isUploading: Bool
     
     init() {
 
         self.results = realm.objects(PhotoCaptureSession.self)
         self.sortedResults = results.sorted(byKeyPath: "sessionStart", ascending: false)
-        self.uploadService = UploadService()
+//        self.uploadService = UploadService()
         self.dataService = DataService()
 //        self.dateReference = Date()
-        self.isUploading = true
+        //self.isUploading = true
 
     }
     
@@ -77,6 +78,8 @@ final class GalleryModel: ObservableObject {
 struct GalleryView: View {
 
     @StateObject var gallery = GalleryModel()
+    @StateObject var uploadService = UploadService()
+    
     let timeFormatter: DateFormatter
 //    let shortDateFormatter: DateFormatter
 //    @State var isEditing: Bool = false
@@ -134,7 +137,7 @@ struct GalleryView: View {
                 }
             }
             
-            if gallery.uploadService.isUploading {
+            if uploadService.isUploading {
                 UploadingView()
 //                ZStack {
 //
@@ -178,7 +181,7 @@ struct GalleryView: View {
                     if gallery.editMode == .active {
                         Button("Upload") {
                             print("Upload")
-                            gallery.uploadService.upload(sessionIds: gallery.selection)
+                            uploadService.upload(sessionIds: gallery.selection)
                             gallery.editMode = .inactive
                             gallery.selection = Set<ObjectId>()
 
@@ -186,7 +189,9 @@ struct GalleryView: View {
 
                         Button("Delete") {
                             print("Delete")
-                            gallery.dataService.delete(sessions: gallery.selection)
+                            gallery.dataService.delete(sessions: gallery.selection){
+                                print("finished deleting...")
+                            }
                             gallery.editMode = .inactive
                             gallery.selection = Set<ObjectId>()
                         }

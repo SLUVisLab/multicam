@@ -89,11 +89,15 @@ final class CameraModel: ObservableObject {
     func stopTimedCapture() {
         isActive = false
         timer.invalidate()
-        for ident in self.dataService.photoCollection!.localIdentifiers {
-            print(ident)
-        }
-        
+//        for ident in self.dataService.photoCollection!.localIdentifiers {
+//            print(ident)
+//        }
+//
+        // TODO: Error handling for type coercion
         self.dataService.save(siteId: Int(self.selectedSite) ?? 0, blockId: Int(self.selectedBlock) ?? 0)
+        
+        self.selectedSite = ""
+        self.selectedBlock = ""
     }
     
     func switchFlash() {
@@ -225,10 +229,13 @@ struct CameraView: View {
             }
             
         }
+        // Makes number pad dissappear when you tap somewhere else
         .onTapGesture {
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
                 }
     }
+    
+    // Make the button gray when it's disabled
     var buttonColor: Color {
         return camera.selectedSite.isEmpty || camera.selectedBlock.isEmpty ? .gray : .white
     }

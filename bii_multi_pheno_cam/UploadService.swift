@@ -12,7 +12,7 @@ import FirebaseFirestore
 import Photos
 import SwiftUI
 
-public class UploadService {
+public class UploadService: ObservableObject {
     
     let dataService: DataService
 //    var sessionId: UUID?
@@ -47,6 +47,7 @@ public class UploadService {
         let db = Firestore.firestore() // this is our reference to the firestore NoSQL database
         let reference = storage.reference()
         let imagesRef = reference.child("images")
+        let dispatchGroup = DispatchGroup()
         
         var imageUrl: URL?
         var creationDate: Date?
@@ -54,7 +55,7 @@ public class UploadService {
         
         // This next chunk groups the photo references from multiple sessions into 1 array. It also flattens the session metadata using multiple dictionaries. It maps array indices matching future fetchAssets results to keys which are mapped to sessionData instances. Refactored from having to run all the remaining upload code for each individual session (multiple db and network calls in a nested for loop -- ick!). Still, I can't tell if this is clever or just wrong. Nixing the extra for loop also made it possible to use the group dispatch easily and have a clear way to tell when all the async calls where complete. If this is ruining your day right now, I'm sorry!
         
-        // For Future refactor: Maybe redesigning the data models in the Realm db could make this uneccessary.
+        // For Future refactor: Maybe redesigning the data models in the Realm db could make this uneccessary. Also -- Could probably wrap this in a class
         
         var counter = 0 // This becomes dict keys that match the array indices of images in fetchResults
         var keyValue = 0 // Each keyvalue (0, 1, 2, ...n) corresponds to 1 set of session metadata
@@ -114,6 +115,7 @@ public class UploadService {
                     let fileRef = imagesRef.child(filename)
                     print(filename)
                     
+                    dispatchGroup.enter()
                     PHImageManager.default().requestImageDataAndOrientation(for: fetchResults.object(at: i), options: requestOptions, resultHandler: { (imageData, dataUTI, orientation, info) in
                             if let image = imageData {
                                 //successfully retrieved image data from photos
@@ -121,6 +123,7 @@ public class UploadService {
                                     guard let metadata = metadata else {
                                         // TODO: Error uploading jpeg to Firebase Storage
                                         print("Error uploading jpeg to Firebase Storage")
+                                        dispatchGroup.leave()
                                         return
                                     }
                                     //successful upload!
@@ -128,6 +131,7 @@ public class UploadService {
                                         guard let url = url else {
                                           // TODO: Error retrieving jpeg url
                                             print("Error retrieving jpeg url")
+                                            dispatchGroup.leave()
                                           return
                                         }
                                         //successfully got resource url
@@ -148,9 +152,11 @@ public class UploadService {
                                                 print(err)
                                                 self.isUploading = false
                                                 self.statusMessage = "Error writing to firestore"
+                                                dispatchGroup.leave()
                                                 
                                             } else {
                                                 // Successfully wrote document to firestore
+                                                dispatchGroup.leave()
                                                 print("Successfully wrote document to firestore!")
                                                 
                                             }
@@ -163,16 +169,32 @@ public class UploadService {
                                 print("Error: Unable to retrieve PHAsset for upload")
                                 self.isUploading = false
                                 self.statusMessage = "Error: Unable to retrieve PHAsset for upload"
+                                dispatchGroup.leave()
                             }
                         }
                     )
                 }
+                
+                dispatchGroup.notify(queue: .main){
+                    
+                    print("Finished Uploading!")
+                    self.isUploading = false
+                    
+                    self.dataService.delete(sessions: sessionIds) {
+                        print("Finished Deleting!")
+                    }
+                    
+                    
+
+                }
+                
             } else {
                 // TODO: Error fetching PHAsset with local identifier
                 print("Error: Unable to find PHAsset with matching local identifier")
                 self.isUploading = false
                 self.statusMessage = "Error: Unable to find PHAsset with matching local identifier"
             }
+        
 //        }
     }
 }

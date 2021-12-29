@@ -53,8 +53,7 @@ public class DataService {
         }
     }
     
-    // TODO: Clean up parameters for delete requests. Several options could be available here
-    func delete(sessions: Set<ObjectId>, assets: PHFetchResult<PHAsset>? = nil) {
+    func delete(sessions: Set<ObjectId>, complettionHandler: @escaping () -> Void) {
         
         let realm = try! Realm()
         let collection = realm.objects(PhotoCaptureSession.self).filter("sessionId IN %@", sessions)
@@ -83,5 +82,26 @@ public class DataService {
         }
 
     }
+    
+    // Seems to break and cause realm out of bounds error...
+    // Used in upload service -- we already made the first trip to the db and photos
+//    func delete(collection: Results<PhotoCaptureSession>, fetchResults: PHFetchResult<PHAsset>, completionHandler: @escaping () -> Void) {
+//        let realm = try! Realm()
+//
+//        PHPhotoLibrary.shared().performChanges({
+//            PHAssetChangeRequest.deleteAssets(fetchResults)
+//        })
+//
+//        do {
+//            try realm.write {
+//
+//                realm.delete(collection)
+//            }
+//        } catch let error {
+//            print("error deleting realm objects: " + error.localizedDescription)
+//        }
+//
+//
+//    }
     
 }
