@@ -22,6 +22,7 @@
 		D7D68AF3276BC5CE0035811C /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D7D68AF2276BC5CE0035811C /* RealmSwift */; };
 		D7D68AFB27723E890035811C /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D7D68AFA27723E890035811C /* FirebaseFirestore */; };
 		D7D68AFD27723E890035811C /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = D7D68AFC27723E890035811C /* FirebaseStorage */; };
+		D7D9502F277E2ABC00C2F297 /* SessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D9502E277E2ABC00C2F297 /* SessionView.swift */; };
 		D7EE919E275E675E002EA1A3 /* PhotoCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7EE919D275E675E002EA1A3 /* PhotoCaptureSession.swift */; };
 		D7EE91A5275E7886002EA1A3 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7EE91A4275E7886002EA1A3 /* DataService.swift */; };
 		D7EE91A7275FF923002EA1A3 /* UploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7EE91A6275FF923002EA1A3 /* UploadService.swift */; };
@@ -41,6 +42,7 @@
 		D7176571274417D5004D38F3 /* CameraService+Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraService+Enums.swift"; sourceTree = "<group>"; };
 		D717657327441CAE004D38F3 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		D76D6C4E274EB23E005BB13F /* bii-multi-pheno-cam-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "bii-multi-pheno-cam-Info.plist"; sourceTree = SOURCE_ROOT; };
+		D7D9502E277E2ABC00C2F297 /* SessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionView.swift; sourceTree = "<group>"; };
 		D7EE919D275E675E002EA1A3 /* PhotoCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureSession.swift; sourceTree = "<group>"; };
 		D7EE91A4275E7886002EA1A3 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		D7EE91A6275FF923002EA1A3 /* UploadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadService.swift; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 				D7EE91A6275FF923002EA1A3 /* UploadService.swift */,
 				D717656D2744091D004D38F3 /* CameraService.swift */,
 				D717657327441CAE004D38F3 /* CameraPreview.swift */,
+				D7D9502E277E2ABC00C2F297 /* SessionView.swift */,
 				D717656F274416CC004D38F3 /* PhotoCaptureProcessor.swift */,
 				D717656527308A0A004D38F3 /* GalleryView.swift */,
 				D717655B273087ED004D38F3 /* Preview Content */,
@@ -199,6 +202,7 @@
 				D7EE91A5275E7886002EA1A3 /* DataService.swift in Sources */,
 				D717657427441CAE004D38F3 /* CameraPreview.swift in Sources */,
 				D717656627308A0A004D38F3 /* GalleryView.swift in Sources */,
+				D7D9502F277E2ABC00C2F297 /* SessionView.swift in Sources */,
 				D7EE91A7275FF923002EA1A3 /* UploadService.swift in Sources */,
 				D717656E2744091D004D38F3 /* CameraService.swift in Sources */,
 				D7EE919E275E675E002EA1A3 /* PhotoCaptureSession.swift in Sources */,
