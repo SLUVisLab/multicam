@@ -81,6 +81,7 @@ struct GalleryView: View {
     @StateObject var uploadService = UploadService()
     
     let timeFormatter: DateFormatter
+    let durationFormatter: DateComponentsFormatter
 //    let shortDateFormatter: DateFormatter
 //    @State var isEditing: Bool = false
     
@@ -90,6 +91,11 @@ struct GalleryView: View {
         timeFormatter = DateFormatter()
         timeFormatter.dateStyle = .none
         timeFormatter.timeStyle = .short
+        
+        durationFormatter = DateComponentsFormatter()
+        durationFormatter.unitsStyle = .abbreviated
+        durationFormatter.allowedUnits = [.minute, .second]
+        durationFormatter.zeroFormattingBehavior = .dropAll
         
 //        shortDateFormatter = DateFormatter()
 //        shortDateFormatter.dateFormat = "E, MMM d"
@@ -117,12 +123,16 @@ struct GalleryView: View {
                         .frame(width: 120)
                         .cornerRadius(4)
                         .padding(.vertical, 4)
-
+                    
                     VStack(alignment: .leading, spacing: 5) {
                         Text(verbatim: "Block " + String(result.blockId))
                             .fontWeight(.semibold)
                             .lineLimit(2)
                             .minimumScaleFactor(0.5)
+                        
+                        Text("Site " + String(result.siteId))
+                        
+                        Spacer()
 
                         Text(result.sessionStart, formatter: timeFormatter)
                             .font(.subheadline)
@@ -131,30 +141,21 @@ struct GalleryView: View {
                         Text(String(result.photoReferences.count) + " images")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
+                        
+                        Text(durationFormatter.string(from: result.duration())!)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
 
                     }
+                    .padding()
 
                 }
             }
             
             if uploadService.isUploading {
+                
                 UploadingView()
-//                ZStack {
-//
-//                    Color(.white)
-//                        .ignoresSafeArea()
-//                        .opacity(0.8)
-//
-//                    VStack{
-//
-//                        ProgressView()
-//                            .progressViewStyle(CircularProgressViewStyle(tint: .blue))
-//                            .scaleEffect(5)
-//
-//                        Text("Uploading...")
-//
-//                    }
-//                }
+
             }
         }
             .navigationTitle("Gallery")
