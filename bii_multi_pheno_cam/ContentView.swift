@@ -41,11 +41,23 @@ struct ContentView: View {
                         .cornerRadius(10)
                 }
                 
-                Button(action: {content.dataService.deleteAll()}) {
-                    Text(verbatim: "Clear Database")
-                        .foregroundColor(.black)
-                }
+//                Button(action: {content.dataService.deleteAll()}) {
+//                    Text(verbatim: "Clear Database")
+//                        .foregroundColor(.black)
+//                }
             }
+                .toolbar{
+                    ToolbarItem(placement: .navigationBarTrailing){
+                        NavigationLink(destination: SettingsView()){
+                            Image(systemName: "gearshape.fill")
+                                .resizable()
+                                .scaledToFit()
+//                                .font(.system(size: 32.0))
+//                                .padding()
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
         }
     }
 }

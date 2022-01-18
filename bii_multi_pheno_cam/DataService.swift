@@ -57,6 +57,8 @@ public class DataService {
         
         let realm = try! Realm()
         let collection = realm.objects(PhotoCaptureSession.self).filter("sessionId IN %@", sessions)
+        print("Retrieved Realm Objects...")
+        
         var references = [String]()
         
         for session in collection {
@@ -64,6 +66,7 @@ public class DataService {
         }
         
         let fetchResults = PHAsset.fetchAssets(withLocalIdentifiers: references, options: nil)
+        print("Deleting PHAssets...")
         if fetchResults.count > 0 {
             PHPhotoLibrary.shared().performChanges({
                 PHAssetChangeRequest.deleteAssets(fetchResults)
@@ -73,6 +76,7 @@ public class DataService {
         }
         
         do {
+            print("Deleting realm objects...")
             try realm.write {
                 
                 realm.delete(collection)
