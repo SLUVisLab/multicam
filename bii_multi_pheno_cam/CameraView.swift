@@ -11,7 +11,7 @@ import AVFoundation
 import ActivityIndicatorView
 
 final class CameraModel: ObservableObject {
-    private let service = CameraService()
+    public var service: CameraService
     
     @Published var photo: Photo!
     
@@ -38,6 +38,7 @@ final class CameraModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
     
     init() {
+        self.service = CameraService()
         self.session = service.session
         self.dataService = DataService()
         
@@ -95,6 +96,8 @@ final class CameraModel: ObservableObject {
         
         self.selectedSite = ""
         self.selectedBlock = ""
+        self.service = CameraService()
+        self.session = self.service.session
     }
     
     func switchFlash() {
