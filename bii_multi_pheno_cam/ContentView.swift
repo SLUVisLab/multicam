@@ -9,10 +9,10 @@ import SwiftUI
 
 final class ContentModel: ObservableObject {
     
-    var dataService: DataService
+//    var dataService: DataService
  
     init() {
-        self.dataService = DataService()
+//        self.dataService = DataService()
     }
 }
 

@@ -20,20 +20,25 @@ final class GalleryModel: ObservableObject {
     var results: Results<PhotoCaptureSession>
     var sortedResults: Results<PhotoCaptureSession>
     
-    // TODO: refactor data service out of gellerymodel and instantiate it in the view
+    // TODO: refactor data service out of gallerymodel and instantiate it in the view?
     let dataService: DataService
 //    var dateReference: Date
-    //let isUploading: Bool
+    @Published var isUpdating: Bool
     
     init() {
 
-        self.results = realm.objects(PhotoCaptureSession.self)
+        self.results = self.realm.objects(PhotoCaptureSession.self)
         self.sortedResults = results.sorted(byKeyPath: "sessionStart", ascending: false)
 //        self.uploadService = UploadService()
         self.dataService = DataService()
 //        self.dateReference = Date()
-        //self.isUploading = true
+        self.isUpdating = false
 
+    }
+    
+    func updateResults() {
+        self.results = self.realm.objects(PhotoCaptureSession.self)
+        self.sortedResults = results.sorted(byKeyPath: "sessionStart", ascending: false)
     }
     
     // TODO: Add empty image placeholder to assets. Match size and aspect ratio of normal captures.
@@ -106,49 +111,52 @@ struct GalleryView: View {
     var body: some View {
         ZStack {
             List(gallery.sortedResults, id: \.sessionId, selection: $gallery.selection) {result in
-                NavigationLink(destination: SessionView(session: result)) {
-                    HStack() {
-        //
-        //                if Calendar.current.dateComponents([.day], from: gallery.dateReference, to: result.sessionStart).day! > 1 {
-        //                    Spacer()
-        //                    Text(result.sessionStart, formatter: shortDateFormatter)
-        //                    gallery.dateReference = result.sessionStart
-        //                }
-                        
-                        // TODO: This is janky way to handle instances where no photo identifier can be found. Consider refactor
-                        Image(uiImage: gallery.getThumbnail(localIdentfier: result.photoReferences.first ?? "empty"))
-                            .resizable()
-                            //.scaledToFit()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 120)
-                   	         .cornerRadius(4)
-                            .padding(.vertical, 4)
-                        
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(verbatim: "Block " + String(result.blockId))
-                                .fontWeight(.semibold)
-                                .lineLimit(2)
-                                .minimumScaleFactor(0.5)
+                
+                if !gallery.isUpdating {
+                    NavigationLink(destination: SessionView(session: result)) {
+                        HStack() {
+            //
+            //                if Calendar.current.dateComponents([.day], from: gallery.dateReference, to: result.sessionStart).day! > 1 {
+            //                    Spacer()
+            //                    Text(result.sessionStart, formatter: shortDateFormatter)
+            //                    gallery.dateReference = result.sessionStart
+            //                }
                             
-                            Text("Site " + String(result.siteId))
+                            // TODO: This is janky way to handle instances where no photo identifier can be found. Consider refactor
+                            Image(uiImage: gallery.getThumbnail(localIdentfier: result.photoReferences.first ?? "empty"))
+                                .resizable()
+                                //.scaledToFit()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 120)
+                                 .cornerRadius(4)
+                                .padding(.vertical, 4)
                             
-                            Spacer()
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text(verbatim: "Block " + String(result.blockId))
+                                    .fontWeight(.semibold)
+                                    .lineLimit(2)
+                                    .minimumScaleFactor(0.5)
+                                
+                                Text("Site " + String(result.siteId))
+                                
+                                Spacer()
 
-                            Text(result.sessionStart, formatter: timeFormatter)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                Text(result.sessionStart, formatter: timeFormatter)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
 
-                            Text(String(result.photoReferences.count) + " images")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                            
-                            Text(durationFormatter.string(from: result.duration())!)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                Text(String(result.photoReferences.count) + " images")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                
+                                Text(durationFormatter.string(from: result.duration())!)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+
+                            }
+                            .padding()
 
                         }
-                        .padding()
-
                     }
                 }
             }
@@ -183,19 +191,25 @@ struct GalleryView: View {
                     if gallery.editMode == .active {
                         Button("Upload") {
                             print("Upload")
+                            gallery.isUpdating = true
                             uploadService.upload(sessionIds: gallery.selection)
+                            gallery.updateResults()
                             gallery.editMode = .inactive
                             gallery.selection = Set<ObjectId>()
+                            gallery.isUpdating = false
 
                         }
 
                         Button("Delete") {
                             print("Delete")
+                            gallery.isUpdating = true
                             gallery.dataService.delete(sessions: gallery.selection){
                                 print("finished deleting...")
                             }
+                            gallery.updateResults()
                             gallery.editMode = .inactive
                             gallery.selection = Set<ObjectId>()
+                            gallery.isUpdating = false
                         }
                     }
                 }
