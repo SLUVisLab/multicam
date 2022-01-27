@@ -36,6 +36,7 @@ final class GalleryModel: ObservableObject {
 
     }
     
+    // if you don't retreive a fresh set of objects from the realm database after deleting some it crashes
     func updateResults() {
         self.results = self.realm.objects(PhotoCaptureSession.self)
         self.sortedResults = results.sorted(byKeyPath: "sessionStart", ascending: false)

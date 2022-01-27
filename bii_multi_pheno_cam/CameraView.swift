@@ -89,10 +89,7 @@ final class CameraModel: ObservableObject {
     func stopTimedCapture() {
         isActive = false
         timer.invalidate()
-//        for ident in self.dataService.photoCollection!.localIdentifiers {
-//            print(ident)
-//        }
-//
+
         // TODO: Error handling for type coercion
         self.dataService.save(siteId: Int(self.selectedSite) ?? 0, blockId: Int(self.selectedBlock) ?? 0)
         
@@ -109,10 +106,6 @@ struct CameraView: View {
 
     @StateObject var camera = CameraModel()
     @State var currentZoomFactor: CGFloat = 1.0
-//    @State private var selectedSite = ""
-//    let siteIds = ["1342", "3220", "1501"]
-//    @State private var selectedBlock = ""
-//    let blockIds = ["1", "2", "3", "4", "5", "6", "7"]
     
     
     var body: some View {

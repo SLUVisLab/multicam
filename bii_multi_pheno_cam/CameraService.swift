@@ -180,37 +180,6 @@ public class CameraService {
                 }
             }
 
-            
-            ////////////////////////////////////////
-//            var defaultVideoDevice: AVCaptureDevice?
-//
-//            if let backCameraDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) {
-//                // If a rear dual camera is not available, default to the rear wide angle camera.
-//                defaultVideoDevice = backCameraDevice
-//            } else if let frontCameraDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) {
-//                // If the rear wide angle camera isn't available, default to the front wide angle camera.
-//                defaultVideoDevice = frontCameraDevice
-//            }
-//
-//            guard let videoDevice = defaultVideoDevice else {
-//                print("Default video device is unavailable.")
-//                setupResult = .configurationFailed
-//                session.commitConfiguration()
-//                return
-//            }
-//
-//            let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
-//
-//            if session.canAddInput(videoDeviceInput) {
-//                session.addInput(videoDeviceInput)
-//                self.videoDeviceInput = videoDeviceInput
-//
-//            } else {
-//                print("Couldn't add video device input to the session.")
-//                setupResult = .configurationFailed
-//                session.commitConfiguration()
-//                return
-//            }
         } catch {
             print("Couldn't create video device input: \(error)")
             setupResult = .configurationFailed
