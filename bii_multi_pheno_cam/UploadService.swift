@@ -50,7 +50,7 @@ public class UploadService: ObservableObject {
         let dispatchGroup = DispatchGroup()
         
         var imageUrl: URL?
-        var creationDate: Date?
+        //var creationDate: Date?
         
         
         // This next chunk groups the photo references from multiple sessions into 1 array. It also flattens the session metadata using multiple dictionaries. It maps array indices matching future fetchAssets results to keys which are mapped to sessionData instances. Refactored from having to run all the remaining upload code for each individual session (multiple db and network calls in a nested for loop -- ick!). Still, I can't tell if this is clever or just wrong. Nixing the extra for loop also made it possible to use the group dispatch easily and have a clear way to tell when all the async calls where complete. If this is ruining your day right now, I'm sorry!
@@ -107,7 +107,7 @@ public class UploadService: ObservableObject {
                 for i in 0..<fetchResults.count {
                     
                     // pull metadata from the PHAssets
-                    creationDate = fetchResults.object(at: i).creationDate
+                    let creationDate = fetchResults.object(at: i).creationDate
                     
                     // Use local identifier as filename for jpeg. Trim repeating sequences after "/"
                     let idString = fetchResults.object(at: i).localIdentifier.split(separator: "/")
