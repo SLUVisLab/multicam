@@ -19,6 +19,8 @@
 		D717657427441CAE004D38F3 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717657327441CAE004D38F3 /* CameraPreview.swift */; };
 		D76D6C4D27443C3A005BB13F /* ActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = D76D6C4C27443C3A005BB13F /* ActivityIndicatorView */; };
 		D7D5DABA279758F90000B2B4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D5DAB9279758F90000B2B4 /* SettingsView.swift */; };
+		D7D5DABC27A45A680000B2B4 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = D7D5DABB27A45A680000B2B4 /* config.json */; };
+		D7D5DABE27A45B780000B2B4 /* ConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D5DABD27A45B780000B2B4 /* ConfigService.swift */; };
 		D7D68AF1276BC5CE0035811C /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = D7D68AF0276BC5CE0035811C /* Realm */; };
 		D7D68AF3276BC5CE0035811C /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D7D68AF2276BC5CE0035811C /* RealmSwift */; };
 		D7D68AFB27723E890035811C /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D7D68AFA27723E890035811C /* FirebaseFirestore */; };
@@ -44,6 +46,8 @@
 		D717657327441CAE004D38F3 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		D76D6C4E274EB23E005BB13F /* bii-multi-pheno-cam-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "bii-multi-pheno-cam-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D7D5DAB9279758F90000B2B4 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		D7D5DABB27A45A680000B2B4 /* config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
+		D7D5DABD27A45B780000B2B4 /* ConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigService.swift; sourceTree = "<group>"; };
 		D7D9502E277E2ABC00C2F297 /* SessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionView.swift; sourceTree = "<group>"; };
 		D7EE919D275E675E002EA1A3 /* PhotoCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureSession.swift; sourceTree = "<group>"; };
 		D7EE91A4275E7886002EA1A3 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
@@ -97,6 +101,8 @@
 				D7EE91A4275E7886002EA1A3 /* DataService.swift */,
 				D7EE91A82767B692002EA1A3 /* GoogleService-Info.plist */,
 				D7EE91A6275FF923002EA1A3 /* UploadService.swift */,
+				D7D5DABB27A45A680000B2B4 /* config.json */,
+				D7D5DABD27A45B780000B2B4 /* ConfigService.swift */,
 				D717656D2744091D004D38F3 /* CameraService.swift */,
 				D717657327441CAE004D38F3 /* CameraPreview.swift */,
 				D7D9502E277E2ABC00C2F297 /* SessionView.swift */,
@@ -186,6 +192,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D717655D273087ED004D38F3 /* Preview Assets.xcassets in Resources */,
+				D7D5DABC27A45A680000B2B4 /* config.json in Resources */,
 				D717655A273087ED004D38F3 /* Assets.xcassets in Resources */,
 				D7EE91A92767B692002EA1A3 /* GoogleService-Info.plist in Resources */,
 			);
@@ -201,6 +208,7 @@
 				D7176564273088E1004D38F3 /* CameraView.swift in Sources */,
 				D7176558273087EB004D38F3 /* ContentView.swift in Sources */,
 				D7176556273087EB004D38F3 /* bii_multi_pheno_camApp.swift in Sources */,
+				D7D5DABE27A45B780000B2B4 /* ConfigService.swift in Sources */,
 				D7176570274416CC004D38F3 /* PhotoCaptureProcessor.swift in Sources */,
 				D7EE91A5275E7886002EA1A3 /* DataService.swift in Sources */,
 				D717657427441CAE004D38F3 /* CameraPreview.swift in Sources */,

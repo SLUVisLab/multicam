@@ -17,6 +17,7 @@ final class ContentModel: ObservableObject {
 }
 
 struct ContentView: View {
+    @EnvironmentObject var configService: ConfigService
     @StateObject var content = ContentModel()
     
     var body: some View {
@@ -40,7 +41,7 @@ struct ContentView: View {
                         .foregroundColor(Color.white)
                         .cornerRadius(10)
                 }
-                
+                Text(configService.config.version)
 //                Button(action: {content.dataService.deleteAll()}) {
 //                    Text(verbatim: "Clear Database")
 //                        .foregroundColor(.black)

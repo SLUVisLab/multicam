@@ -23,3 +23,5 @@ Camera capture code inspired by:
 
 [AVFoundation Docs](https://developer.apple.com/documentation/avfoundation)
 
+[Remote Configuration Loader](https://www.donnywals.com/building-a-simple-remote-configuration-for-your-apps/)
+

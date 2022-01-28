@@ -341,9 +341,11 @@ public class CameraService {
                 
                 // The photo output holds a weak reference to the photo capture delegate and stores it in an array to maintain a strong reference.
                 self.inProgressPhotoCaptureDelegates[photoCaptureProcessor.requestedPhotoSettings.uniqueID] = photoCaptureProcessor
-                self.photoOutput1.capturePhoto(with: photoSettings, delegate: photoCaptureProcessor)
-                self.photoOutput2.capturePhoto(with: photoSettings, delegate: photoCaptureProcessor)
                 self.photoOutput3.capturePhoto(with: photoSettings, delegate: photoCaptureProcessor)
+                self.photoOutput2.capturePhoto(with: photoSettings, delegate: photoCaptureProcessor)
+                self.photoOutput1.capturePhoto(with: photoSettings, delegate: photoCaptureProcessor)
+                
+                
             }
         }
     }
