@@ -7,19 +7,21 @@
 
 import Foundation
 import Combine
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 
 
 class ConfigService: ObservableObject {
 
     @Published private(set) var config: AppConfig
     private let localConfigLoader: LocalConfigLoading
-    private let remoteConfigLoader: RemoteConfigLoading
+//    private let remoteConfigLoader: RemoteConfigLoading
     private var cancellable: AnyCancellable?
     private var syncQueue = DispatchQueue(label: "config_queue_\(UUID().uuidString)")
 
-    init(localConfigLoader: LocalConfigLoading, remoteConfigLoader: RemoteConfigLoading) {
+    init(localConfigLoader: LocalConfigLoading) {
       self.localConfigLoader = localConfigLoader
-      self.remoteConfigLoader = remoteConfigLoader
+//      self.remoteConfigLoader = remoteConfigLoader
 
       config = localConfigLoader.fetch()
     }
@@ -31,7 +33,8 @@ class ConfigService: ObservableObject {
             return
           }
 
-          self.cancellable = self.remoteConfigLoader.fetch()
+//          self.cancellable = self.remoteConfigLoader.fetch()
+            self.cancellable = ConfigPublisher(fileURL: "config")
             .sink(receiveCompletion: { completion in
               // clear cancellable so we could start a new load
               self.cancellable = nil
@@ -39,6 +42,7 @@ class ConfigService: ObservableObject {
               self?.config = newConfig
               self?.localConfigLoader.persist(newConfig)
             })
+            
         }
     }
 }
@@ -103,16 +107,30 @@ class LocalConfigLoader: LocalConfigLoading {
   }
 }
 
-class RemoteConfigLoader: RemoteConfigLoading {
-  func fetch() -> AnyPublisher<AppConfig, Error> {
-    let configUrl = URL(string: "https://s3.eu-central-1.amazonaws.com/com.donnywals.blog/config.json")!
-
-    return URLSession.shared.dataTaskPublisher(for: configUrl)
-      .map(\.data)
-      .decode(type: AppConfig.self, decoder: JSONDecoder())
-      .eraseToAnyPublisher()
-  }
-}
+//class RemoteConfigLoader: RemoteConfigLoading {
+//
+//    func fetch() -> AnyPublisher<AppConfig, Error> {
+//        let db = Firestore.firestore()
+//        let docRef = db.collection("config").document("config")
+//          docRef.getDocument{ (document, error) in
+//              if let document = document, document.exists {
+//                      let dataDescription = document.data().map(String.init(describing:)) ?? "nil"
+//                      print("Document data: \(dataDescription)")
+//                  } else {
+//                      print("Document does not exist")
+//                  }
+//          }
+//
+//        let configURL = "config"
+//
+//        return ConfigPublisher(fileURL: configURL)
+//
+//        return URLSession.shared.dataTaskPublisher(for: configUrl)
+//          .map(\.data)
+//          .decode(type: AppConfig.self, decoder: JSONDecoder())
+//          .eraseToAnyPublisher()
+//    }
+//}
 
 protocol LocalConfigLoading {
   func fetch() -> AppConfig
@@ -124,5 +142,81 @@ protocol RemoteConfigLoading {
 }
 
 struct AppConfig: Codable {
+  var id: String?
   let version: String
+}
+
+class FirebaseSubscription<S: Subscriber>: Subscription where S.Input == AppConfig, S.Failure == Error {
+    private let fileURL: String
+    private var subscriber: S?
+    
+    init(fileURL: String, subscriber: S) {
+        self.fileURL = fileURL
+        self.subscriber = subscriber
+    }
+    
+    func request(_ demand: Subscribers.Demand) {
+        
+        if demand > 0 {
+            //load data from firebase
+            let db = Firestore.firestore()
+            let docRef = db.collection("config").document(fileURL)
+              docRef.getDocument{ (document, error) in
+                  if let err = error {
+                      // we received an error from firebase
+                      self.subscriber?.receive(
+                                          completion: .failure(err)
+                                      )
+//                          let dataDescription = document.data().map(String.init(describing:)) ?? "nil"
+//                          print("Document data: \(dataDescription)")
+                      } else {
+                          // successful request
+                          if let document = document, document.exists {
+                              // document exists
+                              do {
+                                  let data = try document.data(as: AppConfig.self)
+                                  self.subscriber?.receive(data!) //probably not entirely safe
+                              } catch {
+                                  //unable to convert config file
+                                  self.subscriber?.receive(completion: .failure(NSError(domain: "", code: 501, userInfo: [ NSLocalizedDescriptionKey: "Unable to convert config file"])))
+                              }
+                          } else {
+                              // there was no file at the provided URL
+                              self.subscriber?.receive(
+                                completion: .failure(NSError(domain: "", code: 404, userInfo: [ NSLocalizedDescriptionKey: "Firestore configuration not found at: \(self.fileURL)"]))
+                              )
+                          }
+                      }
+              }
+        }
+        
+        
+    }
+    
+    func cancel() {
+        subscriber = nil
+    }
+}
+
+struct ConfigPublisher: Publisher {
+    // The output type of FilePublisher publisher
+    typealias Output = AppConfig
+
+    typealias Failure = Error
+    
+    // fileURL is the url of the file to read
+    let fileURL: String
+    
+    func receive<S>(subscriber: S) where S : Subscriber,
+        Failure == S.Failure, Output == S.Input {
+
+        // Create a FileSubscription for the new subscriber
+        // and set the file to be loaded to fileURL
+        let subscription = FirebaseSubscription(
+            fileURL: fileURL,
+            subscriber: subscriber
+        )
+        
+        subscriber.receive(subscription: subscription)
+    }
 }

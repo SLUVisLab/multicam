@@ -10,8 +10,7 @@ import Firebase
 
 @main
 struct bii_multi_pheno_camApp: App {
-    let configService = ConfigService(localConfigLoader:LocalConfigLoader(),
-                                      remoteConfigLoader: RemoteConfigLoader())
+    let configService = ConfigService(localConfigLoader:LocalConfigLoader())
     
     init() {
         FirebaseApp.configure()
