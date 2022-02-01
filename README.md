@@ -2,6 +2,7 @@
 
 Iceland snackwave narwhal glossier lomo vexillologist +1 butcher offal hell of. Literally lomo 3 wolf moon chicharrones, vegan enamel pin +1 aesthetic biodiesel organic wayfarers four loko. Gochujang keffiyeh lumbersexual bitters, twee semiotics you probably haven't heard of them intelligentsia. Truffaut put a bird on it chambray mixtape narwhal YOLO cold-pressed post-ironic neutra knausgaard church-key chartreuse.
 
+
 ## Contents
 - [Using the App](https://github.com/SLUVisLab/bii_multi_pheno_cam#using-the-app)
   - [Taking Photos](https://github.com/SLUVisLab/bii_multi_pheno_cam#taking-photos)
@@ -13,9 +14,11 @@ Iceland snackwave narwhal glossier lomo vexillologist +1 butcher offal hell of. 
 - [Tech Stack and Codebase](https://github.com/SLUVisLab/bii_multi_pheno_cam#tech-stack-and-codebase)
 - [Resources](https://github.com/SLUVisLab/bii_multi_pheno_cam#resources)
 
+
 ## Using the App
 
 The main screen of the app contains three options: 1) **Capture** for opening the camera view and taking photos, 2) **Gallery** for viewing previous sessions as well as uploading or deleting them, and 3) The settings page indicated by the gear icon in the top right corner. Let's take a look at what's available in each view!
+
 
 ### Taking Photos
 
@@ -38,22 +41,42 @@ To upload or delete recording sessions, enter gallery selection mode by clicking
 
 **On Deleting Recording Sessions:** The photos taken using this app are stored the natiuve iOS Photos Library. If you delete photos using the standard Photos app, it can corrupt the references used internally by this app. We reccomend only using this app to delete photos associated with it. If you do run into issues with this, see the next section: [Configuration and Troubleshooting](https://github.com/SLUVisLab/bii_multi_pheno_cam#configuration-and-troubleshooting)
 
+
 ### Configuration and Troubleshooting
 
 #### App Configuration
 
 The app is packaged with a default configuration for things like camera framerate and size of uploaded images. It also checks the cloud database for an updated configuration file on startup and saves it locally for future use. You can see the configuration values from the **Settings** view and also manually check for a new configuration file using the provided button.
 
+
 #### Troubleshooting
 
 Sometimes the apps local database can become corrupted and get out of sync with the native iOS Photos library. If you run into issues with crashing or freezing, go to the **Settings** view and click the "Clear Database Cache" button. This will delete any current recording sessions you have made with the app and clear the local database.
 
+
 ## Backend Setup
 
+The app requires two cloud services from google to run:
+
+1) Firebase Storage: This is essentially a standard GCP storage bucket that is accessible through firebase SDKs. It's where the raw image data is stored and also the service that provides URL's to the hosted images
+
+2) Firebase Firestore: This is a NoSQL database that stores data related to images such as site ID, block ID, session ID, and related timestamps as well as the hosted URL of the associated image.
+
+
 ### Authentication
+
+You'll need to include a `GoogleService-Info.plist` file in the root directory of the project. The Firebase SDKs will use this for authenticating with cloud services. You find setup instructions here: [Add Firebase to your Apple Project](https://firebase.google.com/docs/ios/setup)
+
+
 ### Accessing Data
 
+WIP
+
+
 ## Tech Stack and Codebase
+
+WIP
+
 
 ## Resources
 
