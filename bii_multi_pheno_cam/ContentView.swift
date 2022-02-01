@@ -41,7 +41,6 @@ struct ContentView: View {
                         .foregroundColor(Color.white)
                         .cornerRadius(10)
                 }
-                Text(configService.config.version)
 //                Button(action: {content.dataService.deleteAll()}) {
 //                    Text(verbatim: "Clear Database")
 //                        .foregroundColor(.black)
@@ -49,7 +48,7 @@ struct ContentView: View {
             }
                 .toolbar{
                     ToolbarItem(placement: .navigationBarTrailing){
-                        NavigationLink(destination: SettingsView()){
+                        NavigationLink(destination: SettingsView().environmentObject(configService)){
                             Image(systemName: "gearshape.fill")
                                 .resizable()
                                 .scaledToFit()

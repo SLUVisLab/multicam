@@ -19,21 +19,26 @@ final class SettingsModel: ObservableObject {
 }
 
 struct SettingsView: View {
+    @EnvironmentObject var configService: ConfigService
     @StateObject var settings = SettingsModel()
+    @State private var showingDbWarning = false
     
     var body: some View {
         Form() {
             
-            Section() {
-                Button(action: {}) {
-                    Text("Update Settings")
-                }
-                Text("Last updated: 10/15/21 5:12pm")
+            Section(header: Text("Configuration")) {
+                Text("**Version:** \(configService.config.version)")
+                Text("**Frame Rate:** \(configService.config.frame_rate_milliseconds) ms")
+                Text("**Max Resolution:** \(configService.config.max_resolution)")
+                Text("Last updated: 01/15/22 5:12pm")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+                Button(action: {}) {
+                    Text("Update Configuration")
+                }
             }
             
-            Section() {
+            Section(header: Text("Camera")) {
                 Toggle(isOn: $settings.cameraDelayEnabled) {
                     Text("Camera Delay")
                 }
@@ -44,6 +49,23 @@ struct SettingsView: View {
                             Text(String(settings.delayIntervals[$0])).tag($0)
                         }
                     }
+                }
+            }
+            Section(header: Text("Database")) {
+                if #available(iOS 15.0, *) {
+                    Button("Clear Database Cache") {
+                        showingDbWarning = true
+                    }
+                    .alert("Warning: this will erase all locally stored image data", isPresented: $showingDbWarning) {
+                        Button("Continue"){
+                            
+                        }
+                        Button("Cancel", role: .cancel){
+                            
+                        }
+                    }
+                } else {
+                    // Fallback on earlier versions
                 }
             }
         }
