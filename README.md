@@ -1,15 +1,15 @@
 # BII Multi-Camera Phenotype Capture for iOS
 
 ## Contents
--[Using the App]()
-  -[Taking Photos]()
-  -[Uploading and Deleting Photo Sessions]()
-  -[Comfiguration and Troubleshooting]()
--[Backend Setup]()
-  -[Authentication]()
-  -[Accessing Data]()
--[Tech Stack and Codebase]()
--[Resources]()
+- [Using the App]()
+  - [Taking Photos]()
+  - [Uploading & Deleting Photo Sessions]()
+  - [Configuration and Troubleshooting]()
+- [Backend Setup]()
+  - [Authentication]()
+  - [Accessing Data]()
+- [Tech Stack and Codebase]()
+- [Resources]()
 
 ## Using the App
 
