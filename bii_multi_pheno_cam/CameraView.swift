@@ -25,7 +25,7 @@ final class CameraModel: ObservableObject {
     
     @Published var selectedBlock = ""
     
-    @Published var selectedSite = ""
+    @Published var selectedSite: String
     
     var alertError: AlertError!
     
@@ -37,10 +37,14 @@ final class CameraModel: ObservableObject {
     
     private var subscriptions = Set<AnyCancellable>()
     
+    let defaults = UserDefaults.standard
+    
     init() {
         self.service = CameraService()
         self.session = service.session
         self.dataService = DataService()
+        self.selectedSite = self.defaults.object(forKey: "selectedSite") as? String ?? String()
+        
         
         service.$photo.sink { [weak self] (photo) in
             guard let pic = photo else { return }
@@ -93,8 +97,7 @@ final class CameraModel: ObservableObject {
 
         // TODO: Error handling for type coercion
         self.dataService.save(siteId: Int(self.selectedSite) ?? 0, blockId: Int(self.selectedBlock) ?? 0)
-        
-        self.selectedSite = ""
+        self.defaults.set(self.selectedSite, forKey: "selectedSite")
         self.selectedBlock = ""
         self.service = CameraService()
         self.session = self.service.session
