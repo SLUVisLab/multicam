@@ -44,6 +44,7 @@ class ConfigService: ObservableObject {
               self?.config = newConfig
               self?.localConfigLoader.persist(newConfig)
               self?.defaults.set(Date(), forKey: "lastConfigUpdate")
+              self?.cancellable = nil
             })
             
         }

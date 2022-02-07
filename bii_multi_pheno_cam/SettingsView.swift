@@ -7,13 +7,14 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
 
 final class SettingsModel: ObservableObject {
     @Published var cameraDelayEnabled = false
     var delayIntervals = [3, 5, 10, 15]
     @Published var cameraDelay = 0
     let defaults = UserDefaults.standard
-    let lastConfigUpdate: Date?
+    @Published var lastConfigUpdate: Date?
     let dateFormatter: DateFormatter
     
     init() {
@@ -27,6 +28,7 @@ final class SettingsModel: ObservableObject {
 struct SettingsView: View {
     @EnvironmentObject var configService: ConfigService
     @StateObject var settings = SettingsModel()
+    let dataService = DataService()
     @State private var showingDbWarning = false
     
     var body: some View {
@@ -43,8 +45,9 @@ struct SettingsView: View {
                 } else {
                     Text("Unable to determine last configuration update")
                 }
-                Button(action: {}) {
-                    Text("Update Configuration")
+                Button("Update Configuration") {
+                    configService.updateConfig()
+                    settings.lastConfigUpdate = settings.defaults.object(forKey: "lastConfigUpdate") as? Date ?? nil
                 }
             }
             
@@ -68,7 +71,7 @@ struct SettingsView: View {
                     }
                     .alert("Warning: this will erase all locally stored image data", isPresented: $showingDbWarning) {
                         Button("Continue"){
-                            
+                            dataService.deleteAll()
                         }
                         Button("Cancel", role: .cancel){
                             
