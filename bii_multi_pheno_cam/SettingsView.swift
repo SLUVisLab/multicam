@@ -12,9 +12,15 @@ final class SettingsModel: ObservableObject {
     @Published var cameraDelayEnabled = false
     var delayIntervals = [3, 5, 10, 15]
     @Published var cameraDelay = 0
+    let defaults = UserDefaults.standard
+    let lastConfigUpdate: Date?
+    let dateFormatter: DateFormatter
     
     init() {
-        
+        self.lastConfigUpdate = self.defaults.object(forKey: "lastConfigUpdate") as? Date ?? nil
+        self.dateFormatter = DateFormatter()
+        self.dateFormatter.dateStyle = .medium
+        self.dateFormatter.timeStyle = .short
     }
 }
 
@@ -30,9 +36,13 @@ struct SettingsView: View {
                 Text("**Version:** \(configService.config.version)")
                 Text("**Frame Rate:** \(configService.config.frame_rate_milliseconds) ms")
                 Text("**Max Resolution:** \(configService.config.max_resolution)")
-                Text("Last updated: 01/15/22 5:12pm")
+                if settings.lastConfigUpdate != nil {
+                    Text("Updated \(settings.lastConfigUpdate!, formatter: settings.dateFormatter)")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+                } else {
+                    Text("Unable to determine last configuration update")
+                }
                 Button(action: {}) {
                     Text("Update Configuration")
                 }

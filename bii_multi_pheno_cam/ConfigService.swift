@@ -12,6 +12,8 @@ import FirebaseFirestoreSwift
 
 
 class ConfigService: ObservableObject {
+    
+    let defaults = UserDefaults.standard
 
     @Published private(set) var config: AppConfig
     private let localConfigLoader: LocalConfigLoading
@@ -41,6 +43,7 @@ class ConfigService: ObservableObject {
             }, receiveValue: { [weak self] newConfig in
               self?.config = newConfig
               self?.localConfigLoader.persist(newConfig)
+              self?.defaults.set(Date(), forKey: "lastConfigUpdate")
             })
             
         }
