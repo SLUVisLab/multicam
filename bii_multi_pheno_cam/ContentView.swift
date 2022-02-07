@@ -23,7 +23,7 @@ struct ContentView: View {
     var body: some View {
         NavigationView{
             VStack{
-                NavigationLink(destination: CameraView()){
+                NavigationLink(destination: CameraView().environmentObject(configService)){
                     Text("Capture")
                         .bold()
                         .frame(width: 280, height: 50)

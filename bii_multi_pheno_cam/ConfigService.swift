@@ -149,7 +149,8 @@ struct AppConfig: Codable {
   var id: String?
   let version: String
   let max_resolution: String
-  let frame_rate_milliseconds: String
+  let frame_rate_seconds: String
+  let frame_rate_tolerance_seconds: String
 }
 
 class FirebaseSubscription<S: Subscriber>: Subscription where S.Input == AppConfig, S.Failure == Error {

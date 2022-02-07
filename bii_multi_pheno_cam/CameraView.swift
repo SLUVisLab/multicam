@@ -79,12 +79,13 @@ final class CameraModel: ObservableObject {
         service.capturePhoto(dataService: self.dataService)
     }
     
-    func startTimedCapture() {
+    func startTimedCapture(interval: Double, tolerance: Double) {
+        print(interval)
         isActive = true
         self.dataService.start()
-        timer = Timer(timeInterval: 1.0, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+        timer = Timer(timeInterval: interval, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
         RunLoop.current.add(timer, forMode: RunLoop.Mode.common)
-        timer.tolerance = 0.2
+        timer.tolerance = tolerance
     }
     
     @objc func timerAction() {
@@ -106,9 +107,12 @@ final class CameraModel: ObservableObject {
     func switchFlash() {
         service.flashMode = service.flashMode == .on ? .off : .on
     }
+    
 }
 
 struct CameraView: View {
+    
+    @EnvironmentObject var configService: ConfigService
 
     @StateObject var camera = CameraModel()
     @State var currentZoomFactor: CGFloat = 1.0
@@ -207,7 +211,10 @@ struct CameraView: View {
                             
                         Spacer()
                             
-                        Button(action: {camera.startTimedCapture()}, label: {
+                        Button(action: {camera.startTimedCapture(
+                            interval: Double(configService.config.frame_rate_seconds)!,
+                            tolerance: Double(configService.config.frame_rate_tolerance_seconds)!)},
+                            label: {
                             ZStack{
                                 Circle()
                                     .fill(buttonColor)

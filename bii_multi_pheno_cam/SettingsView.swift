@@ -36,7 +36,8 @@ struct SettingsView: View {
             
             Section(header: Text("Configuration")) {
                 Text("**Version:** \(configService.config.version)")
-                Text("**Frame Rate:** \(configService.config.frame_rate_milliseconds) ms")
+                Text("**Frame Rate:** \(configService.config.frame_rate_seconds) s")
+                Text("**Frame Rate Tolerance:** \(configService.config.frame_rate_tolerance_seconds) s")
                 Text("**Max Resolution:** \(configService.config.max_resolution)")
                 if settings.lastConfigUpdate != nil {
                     Text("Updated \(settings.lastConfigUpdate!, formatter: settings.dateFormatter)")
