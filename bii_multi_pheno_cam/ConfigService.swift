@@ -41,6 +41,8 @@ class ConfigService: ObservableObject {
               // clear cancellable so we could start a new load
               self.cancellable = nil
             }, receiveValue: { [weak self] newConfig in
+              print(newConfig.sites![0].id!)
+              print(newConfig.sites![0].blocks![1])
               self?.config = newConfig
               self?.localConfigLoader.persist(newConfig)
               self?.defaults.set(Date(), forKey: "lastConfigUpdate")
@@ -97,6 +99,7 @@ class LocalConfigLoader: LocalConfigLoading {
   func persist(_ config: AppConfig) {
     guard let configUrl = cachedConfigUrl else {
       // should never happen, you might want to handle this
+      print("Error that hasn't been handled in LocalConfigLoader.persist")
       return
     }
 
@@ -145,12 +148,19 @@ protocol RemoteConfigLoading {
   func fetch() -> AnyPublisher<AppConfig, Error>
 }
 
+struct Site: Codable {
+  @DocumentID var id: String?
+  let blocks: [String]?
+//  let name: String
+}
+
 struct AppConfig: Codable {
   var id: String?
   let version: String
   let max_resolution: String
   let frame_rate_seconds: String
   let frame_rate_tolerance_seconds: String
+  var sites: [Site]?
 }
 
 class FirebaseSubscription<S: Subscriber>: Subscription where S.Input == AppConfig, S.Failure == Error {
@@ -168,6 +178,7 @@ class FirebaseSubscription<S: Subscriber>: Subscription where S.Input == AppConf
             //load data from firebase
             let db = Firestore.firestore()
             let docRef = db.collection("config").document(fileURL)
+            let sitesRef = docRef.collection("sites")
               docRef.getDocument{ (document, error) in
                   if let err = error {
                       // we received an error from firebase
@@ -181,8 +192,30 @@ class FirebaseSubscription<S: Subscriber>: Subscription where S.Input == AppConf
                           if let document = document, document.exists {
                               // document exists
                               do {
-                                  let data = try document.data(as: AppConfig.self)
-                                  self.subscriber?.receive(data!) //probably not entirely safe
+                                  var data = try document.data(as: AppConfig.self)
+                                  var sites: [Site] = []
+                                  
+                                  sitesRef.getDocuments { (querySnapshot, err) in
+                                      if let err = err {
+                                          print("Error getting site documents")
+                                      } else {
+                                          do {
+                                              for document in querySnapshot!.documents {
+                                                  var site = try document.data(as: Site.self)
+                                                  if let site = site {
+                                                      sites.append(site)
+                                                  }
+                                              }
+                                              
+                                              data!.sites = sites
+                                              
+                                              self.subscriber?.receive(data!) //probably not entirely safe
+                                              
+                                          } catch {
+                                              print("unable to process site documents \(error)")
+                                          }
+                                      }
+                                  }
                               } catch {
                                   //unable to convert config file
                                   self.subscriber?.receive(completion: .failure(NSError(domain: "", code: 501, userInfo: [ NSLocalizedDescriptionKey: "Unable to convert config file"])))

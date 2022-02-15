@@ -28,7 +28,7 @@ final class SettingsModel: ObservableObject {
 struct SettingsView: View {
     @EnvironmentObject var configService: ConfigService
     @StateObject var settings = SettingsModel()
-    let dataService = DataService()
+    let dataService = DataService() // Instantiating a new data service here could cause issues when trying to delete photos
     @State private var showingDbWarning = false
     
     var body: some View {
@@ -47,6 +47,7 @@ struct SettingsView: View {
                     Text("Unable to determine last configuration update")
                 }
                 Button("Update Configuration") {
+                    print("updating config")
                     configService.updateConfig()
                     settings.lastConfigUpdate = settings.defaults.object(forKey: "lastConfigUpdate") as? Date ?? nil
                 }
