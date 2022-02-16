@@ -44,7 +44,8 @@ public class DataService {
     // TODO: func stop dataservice
     
     func deleteAll() {
-        let realm = try! Realm()
+        let configuration = Realm.Configuration(deleteRealmIfMigrationNeeded: true)
+        let realm = try! Realm(configuration: configuration)
         
         try! realm.write{
             let sessions = realm.objects(PhotoCaptureSession.self)

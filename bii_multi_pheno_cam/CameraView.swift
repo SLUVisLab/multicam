@@ -25,6 +25,8 @@ final class CameraModel: ObservableObject {
     
     @Published var isActive = false
     
+    @Published var isConfigured = false
+    
     @Published var selectedBlock: String = ""
     
     @Published var selectedSite: String = ""
@@ -63,11 +65,11 @@ final class CameraModel: ObservableObject {
     let defaults = UserDefaults.standard
     
     init() {
+        print("Initializing....")
         self.service = CameraService()
         self.session = service.session
         self.dataService = DataService()
         self.selectedSiteIndex = self.defaults.object(forKey: "selectedSiteIndex") as? Int ?? 0
-        
         
         service.$photo.sink { [weak self] (photo) in
             guard let pic = photo else { return }
@@ -94,8 +96,10 @@ final class CameraModel: ObservableObject {
     }
     
     func configure() {
+        print("called camera.configure...")
         service.checkForPermissions()
         service.configure()
+        self.isConfigured = true
     }
     
     func capturePhoto() {
@@ -125,6 +129,7 @@ final class CameraModel: ObservableObject {
         self.selectedBlock = ""
         self.service = CameraService()
         self.session = self.service.session
+        self.isConfigured = false
     }
     
     func switchFlash() {
@@ -179,7 +184,9 @@ struct CameraView: View {
                     
                     CameraPreview(session: camera.session)
                         .onAppear {
-                            camera.configure()
+                            if !camera.isConfigured {
+                                camera.configure()
+                            }
                         }
                         .alert(isPresented: $camera.showAlertError, content: {
                             Alert(title: Text(camera.alertError.title), message: Text(camera.alertError.message), dismissButton: .default(Text(camera.alertError.primaryButtonTitle), action: {
@@ -240,11 +247,9 @@ struct CameraView: View {
                             
                         Spacer()
                             
-                        Button(action: {print("\(camera.selectedSite): \(camera.selectedBlock)")},
-                                
-//                                {camera.startTimedCapture(
-//                            interval: Double(configService.config.frame_rate_seconds)!,
-//                            tolerance: Double(configService.config.frame_rate_tolerance_seconds)!)},
+                        Button(action: {camera.startTimedCapture(
+                                            interval: Double(configService.config.frame_rate_seconds)!,
+                                            tolerance: Double(configService.config.frame_rate_tolerance_seconds)!)},
                             label: {
                             ZStack{
                                 Circle()

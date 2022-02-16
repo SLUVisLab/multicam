@@ -148,6 +148,7 @@ public class CameraService {
     // Call this on the session queue.
     /// - Tag: ConfigureSession
     private func configureSession() {
+        print("Called CameraService.configureSesion....")
         if setupResult != .success {
             return
         }
@@ -187,6 +188,7 @@ public class CameraService {
             return
         }
         
+        print("setting up cameras...")
         // Add the photo output.
         if session.canAddOutput(photoOutput1) &&
             session.canAddOutput(photoOutput2) &&
