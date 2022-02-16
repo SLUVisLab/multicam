@@ -10,8 +10,8 @@ import RealmSwift
 
 class PhotoCaptureSession: Object {
     @Persisted(primaryKey: true) var sessionId: ObjectId
-    @Persisted var siteId: Int
-    @Persisted var blockId: Int
+    @Persisted var siteId: String
+    @Persisted var blockId: String
     @Persisted var sessionStart: Date
     @Persisted var sessionStop: Date
     @Persisted var photoReferences: List<String>

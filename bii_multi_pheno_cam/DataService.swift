@@ -25,7 +25,7 @@ public class DataService {
         self.photoCollection = PhotoCollection(sessionStart: Date(), localIdentifiers: [])
     }
     
-    func save(siteId: Int, blockId: Int){
+    func save(siteId: String, blockId: String){
         let realm = try! Realm()
         let photoCaptureSession = PhotoCaptureSession(value: [
             "siteId": siteId,

@@ -13,6 +13,8 @@ import ActivityIndicatorView
 final class CameraModel: ObservableObject {
     public var service: CameraService
     
+    var config: ConfigService?
+    
     @Published var photo: Photo!
     
     @Published var showAlertError = false
@@ -23,9 +25,30 @@ final class CameraModel: ObservableObject {
     
     @Published var isActive = false
     
-    @Published var selectedBlock = ""
+    @Published var selectedBlock: String = ""
     
-    @Published var selectedSite: String
+    @Published var selectedSite: String = ""
+    
+    @Published var selectedSiteIndex: Int {
+        didSet {
+            print("site changed")
+            self.id = UUID()
+            selectedBlockIndex = 0
+            self.selectedSite = config!.config.sites![selectedSiteIndex].id!
+            self.selectedBlock = config!.config.sites![selectedSiteIndex].blocks[selectedBlockIndex]
+            self.defaults.set(self.selectedSiteIndex, forKey: "selectedSiteIndex")
+            
+        }
+    }
+    
+    @Published var selectedBlockIndex: Int = 0 {
+        didSet {
+            self.selectedSite = config!.config.sites![selectedSiteIndex].id!
+            self.selectedBlock = config!.config.sites![selectedSiteIndex].blocks[selectedBlockIndex]
+        }
+    }
+    
+    @Published var id: UUID = UUID()
     
     var alertError: AlertError!
     
@@ -43,7 +66,7 @@ final class CameraModel: ObservableObject {
         self.service = CameraService()
         self.session = service.session
         self.dataService = DataService()
-        self.selectedSite = self.defaults.object(forKey: "selectedSite") as? String ?? String()
+        self.selectedSiteIndex = self.defaults.object(forKey: "selectedSiteIndex") as? Int ?? 0
         
         
         service.$photo.sink { [weak self] (photo) in
@@ -97,8 +120,8 @@ final class CameraModel: ObservableObject {
         timer.invalidate()
 
         // TODO: Error handling for type coercion
-        self.dataService.save(siteId: Int(self.selectedSite) ?? 0, blockId: Int(self.selectedBlock) ?? 0)
-        self.defaults.set(self.selectedSite, forKey: "selectedSite")
+        self.dataService.save(siteId: String(self.selectedSite) ?? "", blockId: String(self.selectedBlock) ?? "")
+        self.defaults.set(self.selectedSiteIndex, forKey: "selectedSite")
         self.selectedBlock = ""
         self.service = CameraService()
         self.session = self.service.session
@@ -106,6 +129,11 @@ final class CameraModel: ObservableObject {
     
     func switchFlash() {
         service.flashMode = service.flashMode == .on ? .off : .on
+    }
+    
+    // best way I can find to pass env objfrom view to view model
+    func setup(config: ConfigService) {
+        self.config = config
     }
     
 }
@@ -167,53 +195,56 @@ struct CameraView: View {
                         // the picker view is nicer than these basic text inputs, but more complex to implement
                         // starting with this and can improve later
                         
-                        HStack(alignment: .center) {
-                            Text("Site ID:")
-                                .font(.callout)
-                                .bold()
-                            
-                            TextField("Enter site ID...", text: $camera.selectedSite)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .keyboardType(.decimalPad)
-                        }
-                        .padding()
+//                        HStack(alignment: .center) {
+//                            Text("Site ID:")
+//                                .font(.callout)
+//                                .bold()
+//
+//                            TextField("Enter site ID...", text: $camera.selectedSite)
+//                                .textFieldStyle(RoundedBorderTextFieldStyle())
+//                                .keyboardType(.decimalPad)
+//                        }
+//                        .padding()
+//
+//                        HStack(alignment: .center) {
+//                            Text("Block ID:")
+//                                .font(.callout)
+//                                .bold()
+//                            TextField("Enter block ID...", text: $camera.selectedBlock)
+//                                .textFieldStyle(RoundedBorderTextFieldStyle())
+//                                .keyboardType(.decimalPad)
+//                        }
+//                        .padding()
                         
-                        HStack(alignment: .center) {
-                            Text("Block ID:")
-                                .font(.callout)
-                                .bold()
-                            TextField("Enter block ID...", text: $camera.selectedBlock)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .keyboardType(.decimalPad)
+                        Form {
+                            Picker("Site ID:", selection: $camera.selectedSiteIndex) {
+                                ForEach(0 ..< configService.config.sites!.count) { index in
+                                    Text(configService.config.sites![index].id!)
+                                }
+                            }
+                            Picker("Block ID:", selection: $camera.selectedBlockIndex) {
+                                ForEach(0 ..< configService.config.sites![camera.selectedSiteIndex].blocks.count) { index in
+                                    Text(configService.config.sites![camera.selectedSiteIndex].blocks[index])
+                                }
+                            }
+                            .id(camera.id)
                         }
-                        .padding()
-                        
-    //                    Form {
-    //                        Picker("Site ID", selection: $selectedSite) {
-    //                            ForEach(siteIds, id: \.self) {
-    //                                Text($0)
-    //                            }
-    //                        }
-    //                        Picker("Block ID", selection: $selectedBlock) {
-    //                            ForEach(blockIds, id: \.self) {
-    //                                Text($0)
-    //                            }
-    //                        }
-    //                    }
-    //                        .background(Color.clear)
-    //                        .padding(.top, 1)
-    //                        .onAppear {
-    //                          UITableView.appearance().backgroundColor = .clear
-    //                        }
-    //                        .onDisappear {
-    //                          UITableView.appearance().backgroundColor = .clear
-    //                        }
+                            .background(Color.clear)
+                            .padding(.top, 1)
+                            .onAppear {
+                              UITableView.appearance().backgroundColor = .clear
+                            }
+                            .onDisappear {
+                              UITableView.appearance().backgroundColor = .clear
+                            }
                             
                         Spacer()
                             
-                        Button(action: {camera.startTimedCapture(
-                            interval: Double(configService.config.frame_rate_seconds)!,
-                            tolerance: Double(configService.config.frame_rate_tolerance_seconds)!)},
+                        Button(action: {print("\(camera.selectedSite): \(camera.selectedBlock)")},
+                                
+//                                {camera.startTimedCapture(
+//                            interval: Double(configService.config.frame_rate_seconds)!,
+//                            tolerance: Double(configService.config.frame_rate_tolerance_seconds)!)},
                             label: {
                             ZStack{
                                 Circle()
@@ -235,10 +266,13 @@ struct CameraView: View {
             }
             
         }
+        .onAppear{
+            self.camera.setup(config: self.configService)
+        }
         // Makes number pad dissappear when you tap somewhere else
-        .onTapGesture {
-                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
-                }
+//        .onTapGesture {
+//                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
+//                }
     }
     
     // Make the button gray when it's disabled

@@ -201,8 +201,8 @@ public class UploadService: ObservableObject {
 
 struct sessionData {
     var sessionId: String
-    var siteId: Int
-    var blockId: Int
+    var siteId: String
+    var blockId: String
     var sessionStart: Date
     var sessionStop: Date
 }

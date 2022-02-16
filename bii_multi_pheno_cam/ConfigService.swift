@@ -42,7 +42,7 @@ class ConfigService: ObservableObject {
               self.cancellable = nil
             }, receiveValue: { [weak self] newConfig in
               print(newConfig.sites![0].id!)
-              print(newConfig.sites![0].blocks![1])
+              print(newConfig.sites![0].blocks[1])
               self?.config = newConfig
               self?.localConfigLoader.persist(newConfig)
               self?.defaults.set(Date(), forKey: "lastConfigUpdate")
@@ -149,8 +149,8 @@ protocol RemoteConfigLoading {
 }
 
 struct Site: Codable {
-  @DocumentID var id: String?
-  let blocks: [String]?
+  @DocumentID var id: String? // this annotation throws a small error but everything breaks without it. fix me?
+  let blocks: [String]
 //  let name: String
 }
 
