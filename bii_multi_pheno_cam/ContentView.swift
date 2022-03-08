@@ -27,7 +27,7 @@ struct ContentView: View {
                     Text("Capture")
                         .bold()
                         .frame(width: 280, height: 50)
-                        .background(Color.green)
+                        .background(Color("button-color"))
                         .foregroundColor(Color.white)
                         .cornerRadius(10)
                         .padding()
@@ -37,7 +37,7 @@ struct ContentView: View {
                     Text("Gallery")
                         .bold()
                         .frame(width: 280, height: 50)
-                        .background(Color.green)
+                        .background(Color("button-color"))
                         .foregroundColor(Color.white)
                         .cornerRadius(10)
                 }
