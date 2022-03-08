@@ -39,6 +39,7 @@ struct SettingsView: View {
                 Text("**Frame Rate:** \(configService.config.frame_rate_seconds) s")
                 Text("**Frame Rate Tolerance:** \(configService.config.frame_rate_tolerance_seconds) s")
                 Text("**Max Resolution:** \(configService.config.max_resolution)")
+                Text("**JPEG Compression:** \(configService.config.jpeg_compression_quality)")
                 if settings.lastConfigUpdate != nil {
                     Text("Updated \(settings.lastConfigUpdate!, formatter: settings.dateFormatter)")
                     .font(.subheadline)

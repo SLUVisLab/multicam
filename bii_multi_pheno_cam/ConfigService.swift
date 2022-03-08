@@ -158,6 +158,7 @@ struct AppConfig: Codable {
   var id: String?
   let version: String
   let max_resolution: String
+  let jpeg_compression_quality: String
   let frame_rate_seconds: String
   let frame_rate_tolerance_seconds: String
   var sites: [Site]?

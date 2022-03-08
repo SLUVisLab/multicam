@@ -33,7 +33,7 @@ struct ContentView: View {
                         .padding()
                 }
                 
-                NavigationLink(destination: GalleryView()){
+                NavigationLink(destination: GalleryView().environmentObject(configService)){
                     Text("Gallery")
                         .bold()
                         .frame(width: 280, height: 50)

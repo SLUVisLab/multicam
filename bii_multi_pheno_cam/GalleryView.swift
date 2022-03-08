@@ -82,7 +82,7 @@ final class GalleryModel: ObservableObject {
 }
 
 struct GalleryView: View {
-
+    @EnvironmentObject var configService: ConfigService
     @StateObject var gallery = GalleryModel()
     @StateObject var uploadService = UploadService()
     
@@ -94,6 +94,7 @@ struct GalleryView: View {
     
         
     init() {
+        
         timeFormatter = DateFormatter()
         timeFormatter.dateStyle = .none
         timeFormatter.timeStyle = .short
@@ -193,7 +194,10 @@ struct GalleryView: View {
                         Button("Upload") {
                             print("Upload")
                             gallery.isUpdating = true
-                            uploadService.upload(sessionIds: gallery.selection)
+                            //TODO: clean up variable initialization? Log an error when casting fails and uses fallback value
+                            uploadService.upload(sessionIds: gallery.selection,
+                                                 max_resolution: Int(configService.config.max_resolution) ?? 1024,
+                                                 jpeg_compression: Double(configService.config.jpeg_compression_quality) ?? 0.8)
                             gallery.updateResults()
                             gallery.editMode = .inactive
                             gallery.selection = Set<ObjectId>()

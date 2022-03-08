@@ -25,7 +25,7 @@ public class UploadService: ObservableObject {
         statusMessage = ""
     }
     
-    func upload(sessionIds: Set<ObjectId>) {
+    func upload(sessionIds: Set<ObjectId>, max_resolution: Int, jpeg_compression: Double) {
         self.isUploading = true
         self.statusMessage = "Uploading..."
         let realm = try! Realm()
@@ -96,12 +96,12 @@ public class UploadService: ObservableObject {
                     
                     dispatchGroup.enter()
                     PHImageManager.default().requestImage(for: fetchResults.object(at: i),
-                           targetSize: CGSize(width: 1280, height: 1280),
+                           targetSize: CGSize(width: max_resolution, height: max_resolution),
                            contentMode: .aspectFit,
                            options: requestOptions,
                            resultHandler: {(img, info) in
                         if let image = img {
-                            if let imageData = image.jpegData(compressionQuality: 0.8) {
+                            if let imageData = image.jpegData(compressionQuality: jpeg_compression) {
                                 let uploadTask = fileRef.putData(imageData, metadata: nil) { (metadata, error) in
                                     guard let metadata = metadata else {
                                         // TODO: Error uploading jpeg to Firebase Storage

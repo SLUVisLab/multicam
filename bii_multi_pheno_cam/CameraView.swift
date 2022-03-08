@@ -136,7 +136,7 @@ final class CameraModel: ObservableObject {
         service.flashMode = service.flashMode == .on ? .off : .on
     }
     
-    // best way I can find to pass env objfrom view to view model
+    // best way I can find to pass env obj from view to view model
     func setup(config: ConfigService) {
         self.config = config
     }
@@ -199,8 +199,8 @@ struct CameraView: View {
                     
                     VStack{
                         
-                        // the picker view is nicer than these basic text inputs, but more complex to implement
-                        // starting with this and can improve later
+                        // Might want to implement some version of the text input field for this is default values for the picker
+                        // fail to load from the remote confif file
                         
 //                        HStack(alignment: .center) {
 //                            Text("Site ID:")
@@ -271,6 +271,7 @@ struct CameraView: View {
             }
             
         }
+        // best way I've found to pass env obj from view to view model
         .onAppear{
             self.camera.setup(config: self.configService)
         }
