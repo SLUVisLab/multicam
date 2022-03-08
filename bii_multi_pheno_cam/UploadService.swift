@@ -15,26 +15,12 @@ import SwiftUI
 public class UploadService: ObservableObject {
     
     let dataService: DataService
-//    var sessionId: UUID?
-//    var siteId: Int?
-//    var blockId: Int?
-//    var sessionStart: Date?
-//    var sessionStop: Date?
-//    var creationDate: Date?
-//    var url: URL?
     @Published var isUploading: Bool
     @Published var statusMessage: String
     
     
     init() {
         dataService = DataService()
-//        sessionId = nil
-//        siteId = nil
-//        blockId = nil
-//        sessionStart = nil
-//        sessionStop = nil
-//        creationDate = nil
-//        url = nil
         isUploading = false
         statusMessage = ""
     }
@@ -73,7 +59,7 @@ public class UploadService: ObservableObject {
                 keyMap[index] = keyValue
             }
             
-            // Realm DB identifiers are type ObjecetId which is difficult to work with so we generate a new uuid
+            // Realm DB identifiers are type ObjecetId which is difficult to work with so we generate a new uuid for each session
             let newSessionId = UUID()
             let data = sessionData(
                 sessionId: newSessionId.uuidString,
@@ -89,20 +75,13 @@ public class UploadService: ObservableObject {
             keyValue += 1
 
         }
-        
-//        for session in sessions {
-//            self.sessionId = UUID()
-//            print(self.sessionId)
-//            self.siteId = session.siteId
-//            self.blockId = session.blockId
-//            self.sessionStart = session.sessionStart
-//            self.sessionStop = session.sessionStop
-            
+                 
             var fetchResults = PHAsset.fetchAssets(withLocalIdentifiers: combinedPhotoReferences, options: nil)
 
             if fetchResults.count > 0 {
 
                 let requestOptions = PHImageRequestOptions()
+                requestOptions.deliveryMode = .highQualityFormat
                 
                 for i in 0..<fetchResults.count {
                     
@@ -116,10 +95,14 @@ public class UploadService: ObservableObject {
                     print(filename)
                     
                     dispatchGroup.enter()
-                    PHImageManager.default().requestImageDataAndOrientation(for: fetchResults.object(at: i), options: requestOptions, resultHandler: { (imageData, dataUTI, orientation, info) in
-                            if let image = imageData {
-                                //successfully retrieved image data from photos
-                                let uploadTask = fileRef.putData(image, metadata: nil) { (metadata, error) in
+                    PHImageManager.default().requestImage(for: fetchResults.object(at: i),
+                           targetSize: CGSize(width: 1280, height: 1280),
+                           contentMode: .aspectFit,
+                           options: requestOptions,
+                           resultHandler: {(img, info) in
+                        if let image = img {
+                            if let imageData = image.jpegData(compressionQuality: 0.8) {
+                                let uploadTask = fileRef.putData(imageData, metadata: nil) { (metadata, error) in
                                     guard let metadata = metadata else {
                                         // TODO: Error uploading jpeg to Firebase Storage
                                         print("Error uploading jpeg to Firebase Storage")
@@ -163,16 +146,82 @@ public class UploadService: ObservableObject {
                                         }
                                     }
                                 }
-
                             } else {
-                                // TODO: Error retrieving image from photos
-                                print("Error: Unable to retrieve PHAsset for upload")
+                                // TODO: Error converting to JPEG
+                                print("Error: Unable to convert UIImage to JPEG")
                                 self.isUploading = false
-                                self.statusMessage = "Error: Unable to retrieve PHAsset for upload"
+                                self.statusMessage = "Error: Unable to convert UIImage to JPEG"
                                 dispatchGroup.leave()
                             }
+                        } else {
+                            // TODO: Error retrieving image from photos
+                            print("Error: Unable to retrieve UIImage for upload")
+                            self.isUploading = false
+                            self.statusMessage = "Error: Unable to retrieve UIImage for upload"
+                            dispatchGroup.leave()
                         }
-                    )
+                    })
+                    
+                    
+// ****** Below is the original upload code which used the largest available image size that PHImageManager could provide. It's been replaced by the above code which allows for variable size and quality. Leaving here for reference for now *************
+                    
+//                    PHImageManager.default().requestImageDataAndOrientation(for: fetchResults.object(at: i), options: requestOptions, resultHandler: { (imageData, dataUTI, orientation, info) in
+//                            if let image = imageData {
+//                                //successfully retrieved image data from photos
+//                                let uploadTask = fileRef.putData(image, metadata: nil) { (metadata, error) in
+//                                    guard let metadata = metadata else {
+//                                        // TODO: Error uploading jpeg to Firebase Storage
+//                                        print("Error uploading jpeg to Firebase Storage")
+//                                        dispatchGroup.leave()
+//                                        return
+//                                    }
+//                                    //successful upload!
+//                                    fileRef.downloadURL { (url, error) in
+//                                        guard let url = url else {
+//                                          // TODO: Error retrieving jpeg url
+//                                            print("Error retrieving jpeg url")
+//                                            dispatchGroup.leave()
+//                                          return
+//                                        }
+//                                        //successfully got resource url
+//                                        imageUrl = url
+//                                        var ref: DocumentReference? = nil
+//                                        ref = db.collection("images").addDocument(data: [
+//                                            "siteId" : sessionDataDictionary[keyMap[i]!]!.siteId,
+//                                            "blockId" : sessionDataDictionary[keyMap[i]!]!.blockId,
+//                                            "sessionId" : sessionDataDictionary[keyMap[i]!]!.sessionId,
+//                                            "sessionStart" : Timestamp(date: sessionDataDictionary[keyMap[i]!]!.sessionStart),
+//                                            "sessionStop" : Timestamp(date: sessionDataDictionary[keyMap[i]!]!.sessionStop),
+//                                            "creationDate" : Timestamp(date: creationDate!),
+//                                            "url" : imageUrl!.absoluteString
+//                                        ]) { err in
+//                                            if let err = err {
+//                                                //TODO: Error writing to firestore
+//                                                print("Error writing to firestore")
+//                                                print(err)
+//                                                self.isUploading = false
+//                                                self.statusMessage = "Error writing to firestore"
+//                                                dispatchGroup.leave()
+//
+//                                            } else {
+//                                                // Successfully wrote document to firestore
+//                                                dispatchGroup.leave()
+//                                                print("Successfully wrote document to firestore!")
+//
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//
+//                            } else {
+//                                // TODO: Error retrieving image from photos
+//                                print("Error: Unable to retrieve PHAsset for upload")
+//                                self.isUploading = false
+//                                self.statusMessage = "Error: Unable to retrieve PHAsset for upload"
+//                                dispatchGroup.leave()
+//                            }
+//                        }
+//                    )
                 }
                 
                 dispatchGroup.notify(queue: .main){
