@@ -222,28 +222,54 @@ struct CameraView: View {
 //                                .keyboardType(.decimalPad)
 //                        }
 //                        .padding()
-                        
-                        Form {
-                            Picker("Site ID:", selection: $camera.selectedSiteIndex) {
-                                ForEach(0 ..< configService.config.sites!.count) { index in
-                                    Text(configService.config.sites![index].id!)
+                        if let sites = configService.config.sites {
+                            Form {
+                                Picker("Site ID:", selection: $camera.selectedSiteIndex) {
+                                    ForEach(0 ..< sites.count) { index in
+                                        Text(sites[index].id!)
+                                    }
                                 }
-                            }
-                            Picker("Block ID:", selection: $camera.selectedBlockIndex) {
-                                ForEach(0 ..< configService.config.sites![camera.selectedSiteIndex].blocks.count) { index in
-                                    Text(configService.config.sites![camera.selectedSiteIndex].blocks[index])
+                                Picker("Block ID:", selection: $camera.selectedBlockIndex) {
+                                    ForEach(0 ..< sites[camera.selectedSiteIndex].blocks.count) { index in
+                                        Text(sites[camera.selectedSiteIndex].blocks[index])
+                                    }
                                 }
+                                .id(camera.id)
                             }
-                            .id(camera.id)
+                                .background(Color.clear)
+                                .padding(.top, 1)
+                                .onAppear {
+                                  UITableView.appearance().backgroundColor = .clear
+                                }
+                                .onDisappear {
+                                  UITableView.appearance().backgroundColor = .clear
+                                }
+                        } else {
+                            Text("Error: Unable to load field site information. Try connecting to a network and reloading the app to download missing configuration")
+                                .foregroundColor(Color.red)
+                                .background(Color.white)
                         }
-                            .background(Color.clear)
-                            .padding(.top, 1)
-                            .onAppear {
-                              UITableView.appearance().backgroundColor = .clear
-                            }
-                            .onDisappear {
-                              UITableView.appearance().backgroundColor = .clear
-                            }
+//                        Form {
+//                            Picker("Site ID:", selection: $camera.selectedSiteIndex) {
+//                                ForEach(0 ..< configService.config.sites!.count) { index in
+//                                    Text(configService.config.sites![index].id!)
+//                                }
+//                            }
+//                            Picker("Block ID:", selection: $camera.selectedBlockIndex) {
+//                                ForEach(0 ..< configService.config.sites![camera.selectedSiteIndex].blocks.count) { index in
+//                                    Text(configService.config.sites![camera.selectedSiteIndex].blocks[index])
+//                                }
+//                            }
+//                            .id(camera.id)
+//                        }
+//                            .background(Color.clear)
+//                            .padding(.top, 1)
+//                            .onAppear {
+//                              UITableView.appearance().backgroundColor = .clear
+//                            }
+//                            .onDisappear {
+//                              UITableView.appearance().backgroundColor = .clear
+//                            }
                             
                         Spacer()
                             
