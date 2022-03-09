@@ -41,10 +41,13 @@ struct ContentView: View {
                         .foregroundColor(Color.white)
                         .cornerRadius(10)
                 }
-//                Button(action: {content.dataService.deleteAll()}) {
-//                    Text(verbatim: "Clear Database")
-//                        .foregroundColor(.black)
-//                }
+                Button("Crash Me!") {
+                    assert(1 == 2, "Maths failure!")
+                }
+                .foregroundColor(Color.white)
+                .background(Color.red)
+                .padding()
+                .cornerRadius(10)
             }
                 .toolbar{
                     ToolbarItem(placement: .navigationBarTrailing){
