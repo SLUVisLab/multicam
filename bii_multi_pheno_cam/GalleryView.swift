@@ -59,6 +59,8 @@ final class GalleryModel: ObservableObject {
                 // and thumbnail; by setting synchronous to true it
                 // will return just the thumbnail
                 let requestOptions = PHImageRequestOptions()
+                
+                // could probably set this to false and use the degraded thumbnail image...
                 requestOptions.isSynchronous = true
                 
                 PHImageManager.default().requestImage(for: fetchResults.object(at: 0) as PHAsset, targetSize: CGSize(width: 120.0, height: 120.0), contentMode: PHImageContentMode.aspectFill, options: requestOptions, resultHandler: { (image, _) in
