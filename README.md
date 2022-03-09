@@ -53,7 +53,15 @@ To upload or delete recording sessions, enter gallery selection mode by clicking
 
 The app is packaged with a default configuration for things like camera framerate, size of uploaded images, and pre-defined lists of available field sites and plots. It also checks the cloud database for an updated configuration file on startup and saves it locally for future use. You can see the configuration values from the **Settings** view and also manually check for a new configuration file using the provided button.
 
-Sample configuration file:
+The firebase config schema includes a nested documenet containing available field site and plot (block) information that users can select from before recording images. This is not included in the default config.json file however the app will not be able to record if selections aren't available from the remote config. **This also means that the app needs to have been loaded at least once while connected a network before it will be ready for recording!**
+
+**version:** configuration version
+**max_resolution:** The maximum resolution of the largest dimension of an image to be uploaded
+**jpeg_compression_quality:** Downsamples raw image data when it is converted to .jpeg format for uploading. 1.0 is highest quality.
+**frame_rate_seconds:** The interval in seconds between image captures. All three cameras fire near concurrently at this interval
+**frame_rate_tolerance_seconds:** A margin of error for the image capture timer. Helps ensure smooth operation.
+
+Sample config.json file and firebase document schema:
 
 ```
 {
@@ -72,7 +80,7 @@ Sample configuration file:
 
 #### Troubleshooting
 
-Sometimes the apps local database can become corrupted and get out of sync with the native iOS Photos library. If you run into issues with crashing or freezing, go to the **Settings** view and click the "Clear Database Cache" button. This will delete any current recording sessions you have made with the app and clear the local database.
+Sometimes the on-device database can become corrupted and get out of sync with the native iOS Photos library. If you run into issues with crashing or freezing, go to the **Settings** view and click the "Clear Database Cache" button. This will delete any current recording sessions you have made with the app and clear the local database.
 
 
 ## Backend Setup
