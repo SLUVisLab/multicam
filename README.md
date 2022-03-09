@@ -23,6 +23,8 @@ The main screen of the app contains three options: 1) **Capture** for opening th
 
 ### Taking Photos
 
+![Taking photos](demo/start-recording.gif)
+
 In order to start the camera you will first need to use the text inputs to enter the field site and block/plot id what you are about to take photos of. Once you've input a field site ID the app should remember it for next time. 
 
 Once you've filled out the text fields, the record button at the bottom of the screen should be white to incdicate it is enabled. After pressing the record button the app will start taking photos continuously at a set framerate using multiple device cameras. The screen should show an animation indicating that photo capture is in progress.
@@ -31,6 +33,8 @@ To stop recording, hit the record button again. Voila! You've taken a bunch of p
 
 
 ### Uploading & Deleting Photo Sessions
+
+![Uploading photos](demo/upload-images.gif)
 
 After navigating to the **Gallery** view, you can view and manage collections of photos that have been recorded.
 
