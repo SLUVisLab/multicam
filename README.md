@@ -56,10 +56,15 @@ The app is packaged with a default configuration for things like camera framerat
 The firebase config schema includes a nested documenet containing available field site and plot (block) information that users can select from before recording images. This is not included in the default config.json file however the app will not be able to record if selections aren't available from the remote config. **This also means that the app needs to have been loaded at least once while connected a network before it will be ready for recording!**
 
 **version:** configuration version
+
 **max_resolution:** The maximum resolution of the largest dimension of an image to be uploaded
+
 **jpeg_compression_quality:** Downsamples raw image data when it is converted to .jpeg format for uploading. 1.0 is highest quality.
+
 **frame_rate_seconds:** The interval in seconds between image captures. All three cameras fire near concurrently at this interval
+
 **frame_rate_tolerance_seconds:** A margin of error for the image capture timer. Helps ensure smooth operation.
+
 
 Sample config.json file and firebase document schema:
 
