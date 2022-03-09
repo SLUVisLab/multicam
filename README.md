@@ -47,7 +47,21 @@ To upload or delete recording sessions, enter gallery selection mode by clicking
 
 #### App Configuration
 
-The app is packaged with a default configuration for things like camera framerate and size of uploaded images. It also checks the cloud database for an updated configuration file on startup and saves it locally for future use. You can see the configuration values from the **Settings** view and also manually check for a new configuration file using the provided button.
+The app is packaged with a default configuration for things like camera framerate, size of uploaded images, and pre-defined lists of available field sites and plots. It also checks the cloud database for an updated configuration file on startup and saves it locally for future use. You can see the configuration values from the **Settings** view and also manually check for a new configuration file using the provided button.
+
+Sample configuration file:
+
+```
+{
+    "id": "config",
+    "version": "0.0.1",
+    "max_resolution": "1024",
+    "jpeg_compression_quality": "0.8",
+    "frame_rate_seconds": "1.0",
+    "frame_rate_tolerance_seconds": "0.2"
+}
+
+```
 
 
 #### Troubleshooting
