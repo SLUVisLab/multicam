@@ -67,6 +67,8 @@ Sample configuration file:
 
 ```
 
+![Firebase config schema](demo/firebase-remote-config-setup.png)
+
 
 #### Troubleshooting
 
