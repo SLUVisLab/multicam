@@ -115,6 +115,7 @@ final class CameraModel: ObservableObject {
         timer.tolerance = tolerance
     }
     
+    // the function called by the timer needs an objc wrapper
     @objc func timerAction() {
         capturePhoto()
     }
