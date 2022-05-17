@@ -140,7 +140,8 @@ public class UploadService: ObservableObject {
                                     }
                                     if let lens = exif["LensModel"] as? String {
                                         lensModel = lens
-                                        let lensModelNoSpace = lens.replacingOccurrences(of: " ", with: "_")
+                                        let lensModelShort = lens.replacingOccurrences(of: "iPhone 12 Pro back camera ", with: "")
+                                        let lensModelNoSpace = lensModelShort.replacingOccurrences(of: " ", with: "_")
                                         let lensModelNoSlash = lensModelNoSpace.replacingOccurrences(of: "/", with: ":")
                                         filename += lensModelNoSlash + "_"
                                         print(lens)
