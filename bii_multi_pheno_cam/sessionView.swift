@@ -55,12 +55,14 @@ struct SessionView: View {
             
             LazyVGrid(columns: columns, spacing: 10) {
                 ForEach(indexes, id: \.self) { index in
-                    Image(uiImage: getThumbnail(index: index))
-                        .resizable()
-                        //.scaledToFit()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 120)
+                    NavigationLink(destination: ImageView(session: self.session, index: index)){
+                        Image(uiImage: getThumbnail(index: index))
+                            .resizable()
+                            //.scaledToFit()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 120)
                             .cornerRadius(3)
+                    }
                     
                 }
                 

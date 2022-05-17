@@ -42,14 +42,10 @@ final class GalleryModel: ObservableObject {
         self.sortedResults = results.sorted(byKeyPath: "sessionStart", ascending: false)
     }
     
-    // TODO: Add empty image placeholder to assets. Match size and aspect ratio of normal captures.
-    // TODO: Update thumbail sizes to maintain original aspect ratio
     func getThumbnail(localIdentfier: String) -> UIImage {
         // Initialize to empty image placeholder
         var thumbnail = UIImage(named: "missing-image")
         
-        // TODO: This is janky way to handle instances where no photo identifier can be found. Consider refactor
-        // TODO: Consider throwing actual errors or setting up a logger instead of print
         if localIdentfier != "empty" {
             var fetchResults = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentfier], options: nil)
             
@@ -126,7 +122,6 @@ struct GalleryView: View {
             //                    gallery.dateReference = result.sessionStart
             //                }
                             
-                            // TODO: This is janky way to handle instances where no photo identifier can be found. Consider refactor
                             Image(uiImage: gallery.getThumbnail(localIdentfier: result.photoReferences.first ?? "empty"))
                                 .resizable()
                                 //.scaledToFit()
