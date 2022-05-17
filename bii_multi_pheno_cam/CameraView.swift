@@ -11,6 +11,7 @@ import AVFoundation
 import ActivityIndicatorView
 
 final class CameraModel: ObservableObject {
+    
     public var service: CameraService
     
     var config: ConfigService?
@@ -127,10 +128,11 @@ final class CameraModel: ObservableObject {
         // TODO: Error handling for type coercion
         self.dataService.save(siteId: String(self.selectedSite) ?? "", blockId: String(self.selectedBlock) ?? "")
         self.defaults.set(self.selectedSiteIndex, forKey: "selectedSite")
-        self.selectedBlock = ""
+//        self.selectedBlock = ""
         self.service = CameraService()
         self.session = self.service.session
         self.isConfigured = false
+        
     }
     
     func switchFlash() {
@@ -152,7 +154,7 @@ struct CameraView: View {
 
     @StateObject var camera = CameraModel()
     @State var currentZoomFactor: CGFloat = 1.0
-    
+    @State private var backButtonHidden = false
     
     var body: some View {
         ZStack{
@@ -169,7 +171,10 @@ struct CameraView: View {
                     
                     Spacer()
                     
-                    Button(action: {camera.stopTimedCapture()}, label: {
+                    Button(){
+                        self.backButtonHidden.toggle()
+                        camera.stopTimedCapture()
+                    } label: {
                         ZStack{
                             Circle()
                                 .fill(Color.red)
@@ -179,7 +184,7 @@ struct CameraView: View {
                                 .stroke(Color.red, lineWidth: 2)
                                 .frame(width: 75, height: 75)
                         }
-                    })
+                    }
                 }
             } else {
                 
@@ -276,10 +281,13 @@ struct CameraView: View {
                             
                         Spacer()
                             
-                        Button(action: {camera.startTimedCapture(
+                        Button(){
+                            self.backButtonHidden.toggle()
+                            camera.startTimedCapture(
                                             interval: Double(configService.config.frame_rate_seconds)!,
-                                            tolerance: Double(configService.config.frame_rate_tolerance_seconds)!)},
-                            label: {
+                                            tolerance: Double(configService.config.frame_rate_tolerance_seconds)!)
+                            
+                        } label: {
                             ZStack{
                                 Circle()
                                     .fill(buttonColor)
@@ -289,9 +297,10 @@ struct CameraView: View {
                                     .stroke(buttonColor, lineWidth: 2)
                                     .frame(width: 75, height: 75)
                             }
-                        })
+                        }
                             .padding(.bottom, 20)
                             .disabled(camera.selectedSite.isEmpty || camera.selectedBlock.isEmpty)
+                            
                             
 
                         
@@ -300,6 +309,7 @@ struct CameraView: View {
             }
             
         }
+        .navigationBarBackButtonHidden(backButtonHidden)
         // best way I've found to pass env obj from view to view model
         .onAppear{
             self.camera.setup(config: self.configService)
