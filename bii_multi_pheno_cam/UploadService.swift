@@ -85,24 +85,76 @@ public class UploadService: ObservableObject {
                 
                 for i in 0..<fetchResults.count {
                     
+                    //REPLACED: Now using date from EXIF data
                     // pull metadata from the PHAssets
-                    let creationDate = fetchResults.object(at: i).creationDate
+//                    let creationDate = fetchResults.object(at: i).creationDate
+//                    print(creationDate)
                     
                     // Use local identifier as filename for jpeg. Trim repeating sequences after "/"
                     let idString = fetchResults.object(at: i).localIdentifier.split(separator: "/")
                     let filename = String(idString.first ?? "") + ".jpeg"
                     let fileRef = imagesRef.child(filename)
-                    print(filename)
+                    //print(filename)
                     
                     dispatchGroup.enter()
-                    PHImageManager.default().requestImage(for: fetchResults.object(at: i),
-                           targetSize: CGSize(width: max_resolution, height: max_resolution),
-                           contentMode: .aspectFit,
-                           options: requestOptions,
-                           resultHandler: {(img, info) in
-                        if let image = img {
-                            if let imageData = image.jpegData(compressionQuality: jpeg_compression) {
-                                let uploadTask = fileRef.putData(imageData, metadata: nil) { (metadata, error) in
+//                    PHImageManager.default().requestImage(for: fetchResults.object(at: i),
+//                           targetSize: CGSize(width: max_resolution, height: max_resolution),
+//                           contentMode: .aspectFit,
+//                           options: requestOptions,
+//                           resultHandler: {(img, info) in
+//                        if let image = img {
+//                            if let ciImage = image.ciImage {
+//                                print(ciImage.properties)
+//                                for (key, value) in ciImage.properties {
+//                                    print("key: \(key) - value: \(value)")
+//                                }
+//                            } else {
+//                                print("NO CIIMAGE AVAILABLE")
+//                            }
+//                            if let imageData = image.jpegData(compressionQuality: jpeg_compression) {
+                    
+                    // This current approach takes raw image data, converts it to both UI image(for resizing and exporting as jpeg) and CI Image (for exif data)
+                    // I think using a couple different techniques this could be simplified to ONLY need the CI Image. It makes sense.
+                    // https://stackoverflow.com/questions/61589783/resize-ciimage-to-an-exact-size
+                    // https://developer.apple.com/documentation/coreimage/cicontext/1642214-jpegrepresentation
+                    
+                    PHImageManager.default().requestImageDataAndOrientation(for: fetchResults.object(at: i),
+                                                                               options: requestOptions,
+                                                                               resultHandler: {(data, filename, orientation, info) in
+                        if let data = data {
+                            var lensModel: String?
+                            
+                            var creationDate: Date?
+                            let dateFormatter = DateFormatter()
+                            dateFormatter.dateFormat = "yyyy:MM:dd' 'HH:mm:ss"
+                            dateFormatter.timeZone = TimeZone.current
+                            dateFormatter.locale = Locale.current
+                            
+                            if let ciImage = CIImage(data: data) {
+                                if let exif = ciImage.properties["{Exif}"] as? [String:Any] {
+                                    if let lens = exif["LensModel"] as? String {
+                                        lensModel = lens
+                                        print(lens)
+                                    }
+                                    if let timeStamp = exif["DateTimeOriginal"] as? String {
+                                        creationDate = dateFormatter.date(from: timeStamp)
+                                        print(timeStamp)
+                                    }
+                                } else {
+                                    //TODO: Could not find EXIF Data
+                                    print("Error: No EXIF Data found")
+                                }
+                                print("********************************************")
+                            } else {
+                                //TODO: CI Image conversion failed
+                                print("Error: Failed to convert data object to CIImage")
+                            }
+                            
+                            if let imageData = UIImage(data: data) {
+                                let targetSize = CGSize(width: 400 , height: 400)
+                                let resizedImage = imageData.scalePreservingAspectRatio(targetSize: targetSize)
+                                if let jpegImage = resizedImage.jpegData(compressionQuality: jpeg_compression) {
+                                let uploadTask = fileRef.putData(jpegImage, metadata: nil) { (metadata, error) in
                                     guard let metadata = metadata else {
                                         // TODO: Error uploading jpeg to Firebase Storage
                                         print("Error uploading jpeg to Firebase Storage")
@@ -127,6 +179,7 @@ public class UploadService: ObservableObject {
                                             "sessionStart" : Timestamp(date: sessionDataDictionary[keyMap[i]!]!.sessionStart),
                                             "sessionStop" : Timestamp(date: sessionDataDictionary[keyMap[i]!]!.sessionStop),
                                             "creationDate" : Timestamp(date: creationDate!),
+                                            "lensModel" : lensModel,
                                             "url" : imageUrl!.absoluteString
                                         ]) { err in
                                             if let err = err {
@@ -154,13 +207,20 @@ public class UploadService: ObservableObject {
                                 dispatchGroup.leave()
                             }
                         } else {
-                            // TODO: Error retrieving image from photos
-                            print("Error: Unable to retrieve UIImage for upload")
+                            // TODO: Error converting to UI Image
+                            print("Error: Unable to convert Data to UIImage")
                             self.isUploading = false
-                            self.statusMessage = "Error: Unable to retrieve UIImage for upload"
+                            self.statusMessage = "Error: Unable to convert Data to UIImage"
                             dispatchGroup.leave()
                         }
-                    })
+                    } else {
+                        // TODO: Error retrieving image from photos
+                        print("Error: Unable to retrieve UIImage for upload")
+                        self.isUploading = false
+                        self.statusMessage = "Error: Unable to retrieve UIImage for upload"
+                        dispatchGroup.leave()
+                    }
+                })
                     
                     
 // ****** Below is the original upload code which used the largest available image size that PHImageManager could provide. It's been replaced by the above code which allows for variable size and quality. Leaving here for reference for now *************
@@ -256,3 +316,32 @@ struct sessionData {
     var sessionStop: Date
 }
 
+extension UIImage {
+    func scalePreservingAspectRatio(targetSize: CGSize) -> UIImage {
+        // Determine the scale factor that preserves aspect ratio
+        let widthRatio = targetSize.width / size.width
+        let heightRatio = targetSize.height / size.height
+        
+        let scaleFactor = min(widthRatio, heightRatio)
+        
+        // Compute the new image size that preserves aspect ratio
+        let scaledImageSize = CGSize(
+            width: size.width * scaleFactor,
+            height: size.height * scaleFactor
+        )
+
+        // Draw and return the resized UIImage
+        let renderer = UIGraphicsImageRenderer(
+            size: scaledImageSize
+        )
+
+        let scaledImage = renderer.image { _ in
+            self.draw(in: CGRect(
+                origin: .zero,
+                size: scaledImageSize
+            ))
+        }
+        
+        return scaledImage
+    }
+}
