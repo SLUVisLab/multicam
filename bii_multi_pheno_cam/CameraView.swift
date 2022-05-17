@@ -140,6 +140,8 @@ final class CameraModel: ObservableObject {
     // best way I can find to pass env obj from view to view model
     func setup(config: ConfigService) {
         self.config = config
+        self.selectedSite = config.config.sites![selectedSiteIndex].id!
+        self.selectedBlock = config.config.sites![selectedSiteIndex].blocks[selectedBlockIndex]
     }
     
 }
@@ -200,7 +202,7 @@ struct CameraView: View {
                     
                     VStack{
                         
-                        // Might want to implement some version of the text input field for this is default values for the picker
+                        // Might want to implement some version of the text input field where this is default values for the picker
                         // fail to load from the remote confif file
                         
 //                        HStack(alignment: .center) {

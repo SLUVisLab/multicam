@@ -136,7 +136,7 @@ struct GalleryView: View {
                                     .lineLimit(2)
                                     .minimumScaleFactor(0.5)
                                 
-                                Text("Site " + String(result.siteId))
+                                Text("Site: " + String(result.siteId))
                                 
                                 Spacer()
 
