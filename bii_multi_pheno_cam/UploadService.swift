@@ -91,9 +91,9 @@ public class UploadService: ObservableObject {
 //                    print(creationDate)
                     
                     // Use local identifier as filename for jpeg. Trim repeating sequences after "/"
-                    let idString = fetchResults.object(at: i).localIdentifier.split(separator: "/")
-                    let filename = String(idString.first ?? "") + ".jpeg"
-                    let fileRef = imagesRef.child(filename)
+//                    let idString = fetchResults.object(at: i).localIdentifier.split(separator: "/")
+//                    let filename = String(idString.first ?? "") + ".jpeg"
+//                    let fileRef = imagesRef.child(filename)
                     //print(filename)
                     
                     dispatchGroup.enter()
@@ -123,7 +123,7 @@ public class UploadService: ObservableObject {
                                                                                resultHandler: {(data, filename, orientation, info) in
                         if let data = data {
                             var lensModel: String?
-                            
+                            var filename = ""
                             var creationDate: Date?
                             let dateFormatter = DateFormatter()
                             dateFormatter.dateFormat = "yyyy:MM:dd' 'HH:mm:ss"
@@ -132,13 +132,18 @@ public class UploadService: ObservableObject {
                             
                             if let ciImage = CIImage(data: data) {
                                 if let exif = ciImage.properties["{Exif}"] as? [String:Any] {
-                                    if let lens = exif["LensModel"] as? String {
-                                        lensModel = lens
-                                        print(lens)
-                                    }
                                     if let timeStamp = exif["DateTimeOriginal"] as? String {
                                         creationDate = dateFormatter.date(from: timeStamp)
+                                        let timeStampNoSpace = timeStamp.replacingOccurrences(of: " ", with: "T")
+                                        filename += timeStampNoSpace + "_"
                                         print(timeStamp)
+                                    }
+                                    if let lens = exif["LensModel"] as? String {
+                                        lensModel = lens
+                                        let lensModelNoSpace = lens.replacingOccurrences(of: " ", with: "_")
+                                        let lensModelNoSlash = lensModelNoSpace.replacingOccurrences(of: "/", with: ":")
+                                        filename += lensModelNoSlash + "_"
+                                        print(lens)
                                     }
                                 } else {
                                     //TODO: Could not find EXIF Data
@@ -149,6 +154,12 @@ public class UploadService: ObservableObject {
                                 //TODO: CI Image conversion failed
                                 print("Error: Failed to convert data object to CIImage")
                             }
+                            
+                            let rand = String(Int.random(in: 100..<1000))
+                            filename += String(sessionDataDictionary[keyMap[i]!]!.siteId) + "_" + String(sessionDataDictionary[keyMap[i]!]!.blockId) + "_" + rand + ".jpeg"
+                            print(filename)
+                            
+                            let fileRef = imagesRef.child(filename)
                             
                             if let imageData = UIImage(data: data) {
                                 let targetSize = CGSize(width: 400 , height: 400)
