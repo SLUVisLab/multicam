@@ -11,10 +11,16 @@ import Firebase
 @main
 struct bii_multi_pheno_camApp: App {
     let configService = ConfigService(localConfigLoader:LocalConfigLoader())
+    let defaults = UserDefaults.standard
     
     init() {
         FirebaseApp.configure()
-//        let storage = Storage.storage()
+        
+        if(defaults.object(forKey: "deleteImagesAfterUpload") != nil) {
+            print("found stored setting...")
+        } else {
+            defaults.set(true, forKey: "deleteImagesAfterUpload")
+        }
     }
     
     var body: some Scene {

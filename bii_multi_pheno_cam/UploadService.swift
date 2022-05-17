@@ -289,8 +289,10 @@ public class UploadService: ObservableObject {
                     print("Finished Uploading!")
                     self.isUploading = false
                     
-                    self.dataService.delete(sessions: sessionIds) {
-                        print("Finished Deleting!")
+                    if(UserDefaults.standard.object(forKey: "deleteImagesAfterUpload") as? Bool ?? true) {
+                        self.dataService.delete(sessions: sessionIds) {
+                            print("Finished Deleting!")
+                        }
                     }
                     
                     

@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import Combine
 
 final class SettingsModel: ObservableObject {
     @Published var cameraDelayEnabled = false
@@ -16,6 +17,8 @@ final class SettingsModel: ObservableObject {
     let defaults = UserDefaults.standard
     @Published var lastConfigUpdate: Date?
     let dateFormatter: DateFormatter
+    
+    @ObservedObject var settingsStore = SettingsStore()
     
     init() {
         self.lastConfigUpdate = self.defaults.object(forKey: "lastConfigUpdate") as? Date ?? nil
@@ -54,19 +57,26 @@ struct SettingsView: View {
                 }
             }
             
-            Section(header: Text("Camera")) {
-                Toggle(isOn: $settings.cameraDelayEnabled) {
-                    Text("Camera Delay")
-                }
-                
-                if settings.cameraDelayEnabled {
-                    Picker(selection: $settings.cameraDelay, label: Text( "Seconds")) {
-                        ForEach(0 ..< settings.delayIntervals.count){
-                            Text(String(settings.delayIntervals[$0])).tag($0)
-                        }
-                    }
+//            Section(header: Text("Camera")) {
+//                Toggle(isOn: $settings.cameraDelayEnabled) {
+//                    Text("Camera Delay")
+//                }
+//
+//                if settings.cameraDelayEnabled {
+//                    Picker(selection: $settings.cameraDelay, label: Text( "Seconds")) {
+//                        ForEach(0 ..< settings.delayIntervals.count){
+//                            Text(String(settings.delayIntervals[$0])).tag($0)
+//                        }
+//                    }
+//                }
+//            }
+            	
+            Section(header: Text("Gallery")) {
+                Toggle(isOn: $settings.settingsStore.deleteImagesAfterUpload) {
+                    Text("Delete Images After Upload")
                 }
             }
+            
             Section(header: Text("Database")) {
                 if #available(iOS 15.0, *) {
                     Button("Clear Database Cache") {
@@ -94,4 +104,22 @@ struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
     }
+}
+
+//The Following is a workaround to make settings stored in user.default toggle-able
+private var cancellables = [String: AnyCancellable]()
+
+extension Published {
+    init(defaultValue: Value, key: String) {
+        let value = UserDefaults.standard.object(forKey: key) as? Value ?? defaultValue
+        self.init(initialValue: value)
+        cancellables[key] = projectedValue.sink { val in
+            UserDefaults.standard.set(val, forKey: key)
+        }
+    }
+}
+
+class SettingsStore: ObservableObject {
+    @Published(defaultValue: false, key: "deleteImagesAfterUpload")
+    var deleteImagesAfterUpload: Bool
 }
