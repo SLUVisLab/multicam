@@ -19,6 +19,8 @@
 		D717657427441CAE004D38F3 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717657327441CAE004D38F3 /* CameraPreview.swift */; };
 		D76D6C4D27443C3A005BB13F /* ActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = D76D6C4C27443C3A005BB13F /* ActivityIndicatorView */; };
 		D798C3E52834194600F689E0 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D798C3E42834194500F689E0 /* ImageView.swift */; };
+		D798C3E728359E5700F689E0 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = D798C3E628359E5700F689E0 /* sounds */; };
+		D798C3E92835A10F00F689E0 /* AudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D798C3E82835A10F00F689E0 /* AudioService.swift */; };
 		D7D5DABA279758F90000B2B4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D5DAB9279758F90000B2B4 /* SettingsView.swift */; };
 		D7D5DABC27A45A680000B2B4 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = D7D5DABB27A45A680000B2B4 /* config.json */; };
 		D7D5DABE27A45B780000B2B4 /* ConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D5DABD27A45B780000B2B4 /* ConfigService.swift */; };
@@ -51,6 +53,8 @@
 		D717657327441CAE004D38F3 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		D76D6C4E274EB23E005BB13F /* bii-multi-pheno-cam-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "bii-multi-pheno-cam-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D798C3E42834194500F689E0 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		D798C3E628359E5700F689E0 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
+		D798C3E82835A10F00F689E0 /* AudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioService.swift; sourceTree = "<group>"; };
 		D7D5DAB9279758F90000B2B4 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D7D5DABB27A45A680000B2B4 /* config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
 		D7D5DABD27A45B780000B2B4 /* ConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigService.swift; sourceTree = "<group>"; };
@@ -102,9 +106,11 @@
 			children = (
 				D76D6C4E274EB23E005BB13F /* bii-multi-pheno-cam-Info.plist */,
 				D7EA06D227D92D350050D295 /* GoogleService-Info.plist */,
+				D798C3E628359E5700F689E0 /* sounds */,
 				D7176555273087EB004D38F3 /* bii_multi_pheno_camApp.swift */,
 				D7176557273087EB004D38F3 /* ContentView.swift */,
 				D7D5DAB9279758F90000B2B4 /* SettingsView.swift */,
+				D798C3E82835A10F00F689E0 /* AudioService.swift */,
 				D7176559273087ED004D38F3 /* Assets.xcassets */,
 				D7176571274417D5004D38F3 /* CameraService+Enums.swift */,
 				D7EE919D275E675E002EA1A3 /* PhotoCaptureSession.swift */,
@@ -207,6 +213,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D798C3E728359E5700F689E0 /* sounds in Resources */,
 				D717655D273087ED004D38F3 /* Preview Assets.xcassets in Resources */,
 				D7EA06D327D92D350050D295 /* GoogleService-Info.plist in Resources */,
 				D7D5DABC27A45A680000B2B4 /* config.json in Resources */,
@@ -243,6 +250,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D798C3E92835A10F00F689E0 /* AudioService.swift in Sources */,
 				D798C3E52834194600F689E0 /* ImageView.swift in Sources */,
 				D7176564273088E1004D38F3 /* CameraView.swift in Sources */,
 				D7176558273087EB004D38F3 /* ContentView.swift in Sources */,

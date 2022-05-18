@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 import AVFoundation
 import ActivityIndicatorView
+import AVKit
 
 final class CameraModel: ObservableObject {
     
@@ -155,6 +156,7 @@ struct CameraView: View {
     @StateObject var camera = CameraModel()
     @State var currentZoomFactor: CGFloat = 1.0
     @State private var backButtonHidden = false
+    @State var audioService = AudioService()
     
     var body: some View {
         ZStack{
@@ -173,6 +175,9 @@ struct CameraView: View {
                     
                     Button(){
                         self.backButtonHidden.toggle()
+                        if(UserDefaults.standard.object(forKey: "soundOnForCapture") as? Bool ?? true) {
+                            audioService.stop()
+                        }
                         camera.stopTimedCapture()
                     } label: {
                         ZStack{
@@ -283,6 +288,9 @@ struct CameraView: View {
                             
                         Button(){
                             self.backButtonHidden.toggle()
+                            if(UserDefaults.standard.object(forKey: "soundOnForCapture") as? Bool ?? true) {
+                                audioService.start(track: "sounds/super_mario_1")
+                            }
                             camera.startTimedCapture(
                                             interval: Double(configService.config.frame_rate_seconds)!,
                                             tolerance: Double(configService.config.frame_rate_tolerance_seconds)!)

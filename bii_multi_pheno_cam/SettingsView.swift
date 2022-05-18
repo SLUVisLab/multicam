@@ -57,7 +57,7 @@ struct SettingsView: View {
                 }
             }
             
-//            Section(header: Text("Camera")) {
+            Section(header: Text("Camera")) {
 //                Toggle(isOn: $settings.cameraDelayEnabled) {
 //                    Text("Camera Delay")
 //                }
@@ -69,11 +69,14 @@ struct SettingsView: View {
 //                        }
 //                    }
 //                }
-//            }
+                Toggle(isOn: $settings.settingsStore.soundOnForCapture) {
+                    Text("**Play Music When Active**")
+                }
+            }
             	
             Section(header: Text("Gallery")) {
                 Toggle(isOn: $settings.settingsStore.deleteImagesAfterUpload) {
-                    Text("Delete Images After Upload")
+                    Text("**Delete Images After Upload**")
                 }
             }
             
@@ -122,4 +125,7 @@ extension Published {
 class SettingsStore: ObservableObject {
     @Published(defaultValue: false, key: "deleteImagesAfterUpload")
     var deleteImagesAfterUpload: Bool
+    
+    @Published(defaultValue: true, key: "soundOnForCapture")
+    var soundOnForCapture: Bool
 }
