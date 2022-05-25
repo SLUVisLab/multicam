@@ -136,10 +136,6 @@ final class CameraModel: ObservableObject {
         
     }
     
-    func switchFlash() {
-        service.flashMode = service.flashMode == .on ? .off : .on
-    }
-    
     // best way I can find to pass env obj from view to view model
     func setup(config: ConfigService) {
         self.config = config

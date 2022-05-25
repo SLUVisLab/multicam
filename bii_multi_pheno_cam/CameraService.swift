@@ -46,15 +46,9 @@ public class CameraService {
     
     //  MARK: observed properties UI must react to
     
-    @Published public var flashMode: AVCaptureDevice.FlashMode = .off
-    
     @Published public var shouldShowAlertView = false
     
-    @Published public var shouldShowSpinner = false
-    
     @Published public var willCapturePhoto = false
-    
-    @Published public var isCameraButtonDisabled = true
     
     @Published public var isCameraUnavailable = true
     
@@ -82,7 +76,7 @@ public class CameraService {
     private let videoDeviceDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera, .builtInDualCamera, .builtInTrueDepthCamera, .builtInTelephotoCamera], mediaType: .video, position: .unspecified)
     
     // MARK: Capturing Photos
-    
+    let dispatchGroup = DispatchGroup()
     private let photoOutput1 = AVCapturePhotoOutput()
     private let photoOutput2 = AVCapturePhotoOutput()
     private let photoOutput3 = AVCapturePhotoOutput()
@@ -138,7 +132,7 @@ public class CameraService {
                 }, secondaryAction: nil)
                 self.shouldShowAlertView = true
                 self.isCameraUnavailable = true
-                self.isCameraButtonDisabled = true
+              //  self.isCameraButtonDisabled = true
             }
         }
     }
@@ -154,10 +148,7 @@ public class CameraService {
         }
         
         session.beginConfiguration()
-        
-//        session.sessionPreset = .photo
-        
-        // Add video input.
+
         do {
             if let captureDevice1 = AVCaptureDevice.default(.builtInWideAngleCamera, for: AVMediaType.video, position: .back) {
 
@@ -231,7 +222,7 @@ public class CameraService {
                     
                     if !self.session.isRunning {
                         DispatchQueue.main.async {
-                            self.isCameraButtonDisabled = true
+//                            self.isCameraButtonDisabled = true
                             self.isCameraUnavailable = true
                             completion?()
                         }
@@ -254,7 +245,7 @@ public class CameraService {
                     
                     if self.session.isRunning {
                         DispatchQueue.main.async {
-                            self.isCameraButtonDisabled = false
+//                            self.isCameraButtonDisabled = false
                             self.isCameraUnavailable = false
                         }
                     }
@@ -265,7 +256,6 @@ public class CameraService {
                     DispatchQueue.main.async {
                         self.alertError = AlertError(title: "Camera Error", message: "Camera configuration failed. Either your device camera is not available or its missing permissions", primaryButtonTitle: "Accept", secondaryButtonTitle: nil, primaryAction: nil, secondaryAction: nil)
                         self.shouldShowAlertView = true
-                        self.isCameraButtonDisabled = true
                         self.isCameraUnavailable = true
                     }
                 }
@@ -278,46 +268,16 @@ public class CameraService {
     /// - Tag: CapturePhoto
     public func capturePhoto(dataService: DataService) {
         if self.setupResult != .configurationFailed {
-            self.isCameraButtonDisabled = true
             
             sessionQueue.async {
-//                if let photoOutputConnection = self.photoOutput.connection(with: .video) {
-//                    photoOutputConnection.videoOrientation = .portrait
-//                }
                 var photoSettings = AVCapturePhotoSettings()
                 
-                // Capture HEIF photos when supported. Enable according to user settings and high-resolution photos.
-//                if  self.photoOutput.availablePhotoCodecTypes.contains(.hevc) {
-//                    photoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
-//                }
-                
-                // Sets the flash option for this capture.
-//                if self.videoDeviceInput.device.isFlashAvailable {
-//                    photoSettings.flashMode = self.flashMode
-//                }
-                
                 photoSettings.isHighResolutionPhotoEnabled = true
-                
-                // Sets the preview thumbnail pixel format
-//                if !photoSettings.__availablePreviewPhotoPixelFormatTypes.isEmpty {
-//                    photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: photoSettings.__availablePreviewPhotoPixelFormatTypes.first!]
-//                }
-                
+
                 photoSettings.photoQualityPrioritization = .quality
                 
                 let photoCaptureProcessor = PhotoCaptureProcessor(with: dataService, requestedPhotoSettings: photoSettings,
                                                                   
-//                    willCapturePhotoAnimation: { [weak self] in
-//                    // Tells the UI to flash the screen to signal that SwiftCamera took a photo.
-//                    DispatchQueue.main.async {
-//                        self?.willCapturePhoto = true
-//                    }
-//
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-//                        self?.willCapturePhoto = false
-//                    }
-//
-//                    }
                     completionHandler: { [weak self] (photoCaptureProcessor) in
                     // When the capture is complete, remove a reference to the photo capture delegate so it can be deallocated.
                     if let data = photoCaptureProcessor.photoData {
@@ -327,17 +287,15 @@ public class CameraService {
                         print("No photo data")
                     }
                     
-                    self?.isCameraButtonDisabled = false
-                    
                     self?.sessionQueue.async {
                         self?.inProgressPhotoCaptureDelegates[photoCaptureProcessor.requestedPhotoSettings.uniqueID] = nil
                     }
                 }, photoProcessingHandler: { [weak self] animate in
                     // Animates a spinner while photo is processing
                     if animate {
-                        self?.shouldShowSpinner = true
+                        //self?.shouldShowSpinner = true
                     } else {
-                        self?.shouldShowSpinner = false
+                        //self?.shouldShowSpinner = false
                     }
                 })
                 

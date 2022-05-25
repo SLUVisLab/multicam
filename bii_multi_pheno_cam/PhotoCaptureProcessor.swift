@@ -44,7 +44,7 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
     
     /// - Tag: WillBeginCapture
     func photoOutput(_ output: AVCapturePhotoOutput, willBeginCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings) {
-        maxPhotoProcessingTime = resolvedSettings.photoProcessingTimeRange.start + resolvedSettings.photoProcessingTimeRange.duration
+        //maxPhotoProcessingTime = resolvedSettings.photoProcessingTimeRange.start + resolvedSettings.photoProcessingTimeRange.duration
     }
     
     /// - Tag: WillCapturePhoto
@@ -53,17 +53,17 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
 //            self.willCapturePhotoAnimation()
 //        }
         
-        guard let maxPhotoProcessingTime = maxPhotoProcessingTime else {
-            return
-        }
+       // guard let maxPhotoProcessingTime = maxPhotoProcessingTime else {
+         //   return
+        //}
         
         // Show a spinner if processing time exceeds one second.
-        let oneSecond = CMTime(seconds: 2, preferredTimescale: 1)
-        if maxPhotoProcessingTime > oneSecond {
-            DispatchQueue.main.async {
-                self.photoProcessingHandler(true)
-            }
-        }
+       // let oneSecond = CMTime(seconds: 2, preferredTimescale: 1)
+       // if maxPhotoProcessingTime > oneSecond {
+       //     DispatchQueue.main.async {
+       //         self.photoProcessingHandler(true)
+       //     }
+       // }
     }
     
     /// - Tag: DidFinishProcessingPhoto
@@ -123,6 +123,7 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
             return
         } else {
             guard let data  = photoData else {
+                print("Error: No Photo Data")
                 DispatchQueue.main.async {
                     self.completionHandler(self)
                 }
