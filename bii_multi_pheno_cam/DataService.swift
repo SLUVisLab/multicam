@@ -10,7 +10,6 @@ import RealmSwift
 import Photos
 
 public struct PhotoCollection {
-    public var sessionStart: Date
     public var localIdentifiers: [String]
 }
 
@@ -22,16 +21,16 @@ public class DataService {
     }
     
     func start() {
-        self.photoCollection = PhotoCollection(sessionStart: Date(), localIdentifiers: [])
+        self.photoCollection = PhotoCollection(localIdentifiers: [])
     }
     
-    func save(siteId: String, blockId: String){
+    func save(siteId: String, blockId: String, sessionStart: Date, sessionStop: Date){
         let realm = try! Realm()
         let photoCaptureSession = PhotoCaptureSession(value: [
             "siteId": siteId,
             "blockId": blockId,
-            "sessionStart": self.photoCollection?.sessionStart,
-            "sessionStop": Date(),
+            "sessionStart": sessionStart,
+            "sessionStop": sessionStop,
             "photoReferences": self.photoCollection?.localIdentifiers
         ])
         

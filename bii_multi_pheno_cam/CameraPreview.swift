@@ -19,7 +19,7 @@ struct CameraPreview: UIViewRepresentable {
         }
     }
     
-    let session: AVCaptureSession
+    let session: AVCaptureMultiCamSession
     
     func makeUIView(context: Context) -> VideoPreviewView {
         let view = VideoPreviewView()
@@ -38,7 +38,7 @@ struct CameraPreview: UIViewRepresentable {
 
 struct CameraPreview_Previews: PreviewProvider {
     static var previews: some View {
-        CameraPreview(session: AVCaptureSession())
+        CameraPreview(session: AVCaptureMultiCamSession())
             .frame(height: 400)
     }
 }

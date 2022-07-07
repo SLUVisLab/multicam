@@ -18,6 +18,7 @@
 		D7176572274417D5004D38F3 /* CameraService+Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7176571274417D5004D38F3 /* CameraService+Enums.swift */; };
 		D717657427441CAE004D38F3 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717657327441CAE004D38F3 /* CameraPreview.swift */; };
 		D76D6C4D27443C3A005BB13F /* ActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = D76D6C4C27443C3A005BB13F /* ActivityIndicatorView */; };
+		D777E619285A8114007A43D6 /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D777E618285A8114007A43D6 /* CameraController.swift */; };
 		D798C3E52834194600F689E0 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D798C3E42834194500F689E0 /* ImageView.swift */; };
 		D798C3E728359E5700F689E0 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = D798C3E628359E5700F689E0 /* sounds */; };
 		D798C3E92835A10F00F689E0 /* AudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D798C3E82835A10F00F689E0 /* AudioService.swift */; };
@@ -52,6 +53,7 @@
 		D7176571274417D5004D38F3 /* CameraService+Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraService+Enums.swift"; sourceTree = "<group>"; };
 		D717657327441CAE004D38F3 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		D76D6C4E274EB23E005BB13F /* bii-multi-pheno-cam-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "bii-multi-pheno-cam-Info.plist"; sourceTree = SOURCE_ROOT; };
+		D777E618285A8114007A43D6 /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		D798C3E42834194500F689E0 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		D798C3E628359E5700F689E0 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
 		D798C3E82835A10F00F689E0 /* AudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioService.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 				D7D5DAB9279758F90000B2B4 /* SettingsView.swift */,
 				D798C3E82835A10F00F689E0 /* AudioService.swift */,
 				D7176559273087ED004D38F3 /* Assets.xcassets */,
+				D777E618285A8114007A43D6 /* CameraController.swift */,
 				D7176571274417D5004D38F3 /* CameraService+Enums.swift */,
 				D7EE919D275E675E002EA1A3 /* PhotoCaptureSession.swift */,
 				D7176563273088E1004D38F3 /* CameraView.swift */,
@@ -265,6 +268,7 @@
 				D717656E2744091D004D38F3 /* CameraService.swift in Sources */,
 				D7EE919E275E675E002EA1A3 /* PhotoCaptureSession.swift in Sources */,
 				D7176572274417D5004D38F3 /* CameraService+Enums.swift in Sources */,
+				D777E619285A8114007A43D6 /* CameraController.swift in Sources */,
 				D7D5DABA279758F90000B2B4 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

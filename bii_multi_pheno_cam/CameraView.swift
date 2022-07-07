@@ -13,7 +13,8 @@ import AVKit
 
 final class CameraModel: ObservableObject {
     
-    public var service: CameraService
+    //public var service: CameraService
+    public var camera: CameraController
     
     var config: ConfigService?
     
@@ -56,9 +57,9 @@ final class CameraModel: ObservableObject {
     
     var alertError: AlertError!
     
-    var session: AVCaptureSession
+    //var session: AVCaptureSession
     
-    var dataService: DataService
+//    var dataService: DataService
     
     var timer = Timer()
     
@@ -66,55 +67,73 @@ final class CameraModel: ObservableObject {
     
     let defaults = UserDefaults.standard
     
+    var lens: Int = 1
+    
     init() {
         print("Initializing....")
-        self.service = CameraService()
-        self.session = service.session
-        self.dataService = DataService()
+//        self.service = CameraService()
+//        self.session = service.session
+        self.camera = CameraController()
+//        self.dataService = DataService()
         self.selectedSiteIndex = self.defaults.object(forKey: "selectedSiteIndex") as? Int ?? 0
         
-        service.$photo.sink { [weak self] (photo) in
-            guard let pic = photo else { return }
-            self?.photo = pic
-        }
-        .store(in: &self.subscriptions)
-        
-        service.$shouldShowAlertView.sink { [weak self] (val) in
-            self?.alertError = self?.service.alertError
-            self?.showAlertError = val
-        }
-        .store(in: &self.subscriptions)
-        
-        service.$flashMode.sink { [weak self] (mode) in
-            self?.isFlashOn = mode == .on
-        }
-        .store(in: &self.subscriptions)
-        
-        service.$willCapturePhoto.sink { [weak self] (val) in
-            self?.willCapturePhoto = val
-        }
-        .store(in: &self.subscriptions)
+//        service.$photo.sink { [weak self] (photo) in
+//            guard let pic = photo else { return }
+//            self?.photo = pic
+//        }
+//        .store(in: &self.subscriptions)
+//
+//        service.$shouldShowAlertView.sink { [weak self] (val) in
+//            self?.alertError = self?.service.alertError
+//            self?.showAlertError = val
+//        }
+//        .store(in: &self.subscriptions)
+//
+//        service.$willCapturePhoto.sink { [weak self] (val) in
+//            self?.willCapturePhoto = val
+//        }
+//        .store(in: &self.subscriptions)
         
     }
     
     func configure() {
         print("called camera.configure...")
-        service.checkForPermissions()
-        service.configure()
+        camera.checkForPermissions()
+        
+        //TODO: write better fallbacks. maybe refactor this out of the view model
+        let frameRate: Double
+        if config?.config.frame_rate_seconds != nil {
+            frameRate = Double(config?.config.frame_rate_seconds ?? "3")!
+        } else {
+            frameRate = 3.0
+        }
+
+        camera.configure(fr: frameRate)
+//        service.checkForPermissions()
+//        service.configure()
+        
+        //FIX: Not Neccessarily dude...
         self.isConfigured = true
     }
     
     func capturePhoto() {
-        service.capturePhoto(dataService: self.dataService)
+//        service.capturePhoto(lens: self.lens, dataService: self.dataService)
+//        if self.lens < 3 {
+//            self.lens += 1
+//        } else {
+//            self.lens = 1
+//        }
     }
     
     func startTimedCapture(interval: Double, tolerance: Double) {
-        print(interval)
+//        print(interval)
         isActive = true
-        self.dataService.start()
-        timer = Timer(timeInterval: interval, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
-        RunLoop.current.add(timer, forMode: RunLoop.Mode.common)
-        timer.tolerance = tolerance
+//        self.dataService.start()
+//        timer = Timer(timeInterval: interval, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+//        RunLoop.current.add(timer, forMode: RunLoop.Mode.common)
+//        timer.tolerance = tolerance
+
+        camera.startCapture()
     }
     
     // the function called by the timer needs an objc wrapper
@@ -123,24 +142,33 @@ final class CameraModel: ObservableObject {
     }
     
     func stopTimedCapture() {
+        camera.stop(site: String(self.selectedSite) ?? "", block: String(self.selectedBlock) ?? "")
         isActive = false
-        timer.invalidate()
-
-        // TODO: Error handling for type coercion
-        self.dataService.save(siteId: String(self.selectedSite) ?? "", blockId: String(self.selectedBlock) ?? "")
-        self.defaults.set(self.selectedSiteIndex, forKey: "selectedSite")
-//        self.selectedBlock = ""
-        self.service = CameraService()
-        self.session = self.service.session
-        self.isConfigured = false
+//        timer.invalidate()
+//
+//        // TODO: Error handling for type coercion
+//        self.dataService.save(siteId: String(self.selectedSite) ?? "", blockId: String(self.selectedBlock) ?? "")
+//        self.defaults.set(self.selectedSiteIndex, forKey: "selectedSite")
+////        self.selectedBlock = ""
+//        self.service = CameraService()
+//        self.session = self.service.session
+//        self.isConfigured = false
         
     }
     
     // best way I can find to pass env obj from view to view model
     func setup(config: ConfigService) {
         self.config = config
-        self.selectedSite = config.config.sites![selectedSiteIndex].id!
-        self.selectedBlock = config.config.sites![selectedSiteIndex].blocks[selectedBlockIndex]
+        
+        // TODO: this is a quick patch for starting the camera if site/block info hasnt been pulled from the cloud. Crashes without the guard
+        guard let sites = config.config.sites else {
+            print("No sites provided in configuration")
+            self.selectedSite = ""
+            self.selectedBlock = ""
+            return
+        }
+        self.selectedSite = sites[selectedSiteIndex].id!
+        self.selectedBlock = sites[selectedSiteIndex].blocks[selectedBlockIndex]
     }
     
 }
@@ -191,17 +219,17 @@ struct CameraView: View {
                 
                 ZStack {
                     
-                    CameraPreview(session: camera.session)
+                    CameraPreview(session: camera.camera.session)
                         .onAppear {
                             if !camera.isConfigured {
                                 camera.configure()
                             }
                         }
-                        .alert(isPresented: $camera.showAlertError, content: {
-                            Alert(title: Text(camera.alertError.title), message: Text(camera.alertError.message), dismissButton: .default(Text(camera.alertError.primaryButtonTitle), action: {
-                                camera.alertError.primaryAction?()
-                            }))
-                        })
+//                        .alert(isPresented: $camera.showAlertError, content: {
+//                            Alert(title: Text(camera.alertError.title), message: Text(camera.alertError.message), dismissButton: .default(Text(camera.alertError.primaryButtonTitle), action: {
+//                                camera.alertError.primaryAction?()
+//                            }))
+//                        })
                         .animation(.easeInOut)
                        // .frame(height: 1000)
     //                    .ignoresSafeArea(.all)

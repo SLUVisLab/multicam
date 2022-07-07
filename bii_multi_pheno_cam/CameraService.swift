@@ -266,7 +266,7 @@ public class CameraService {
     //    MARK: Capture Photo
         
     /// - Tag: CapturePhoto
-    public func capturePhoto(dataService: DataService) {
+    public func capturePhoto(lens: Int, dataService: DataService) {
         if self.setupResult != .configurationFailed {
             
             sessionQueue.async {
@@ -301,9 +301,20 @@ public class CameraService {
                 
                 // The photo output holds a weak reference to the photo capture delegate and stores it in an array to maintain a strong reference.
                 self.inProgressPhotoCaptureDelegates[photoCaptureProcessor.requestedPhotoSettings.uniqueID] = photoCaptureProcessor
-                self.photoOutput3.capturePhoto(with: photoSettings, delegate: photoCaptureProcessor)
-                self.photoOutput2.capturePhoto(with: photoSettings, delegate: photoCaptureProcessor)
-                self.photoOutput1.capturePhoto(with: photoSettings, delegate: photoCaptureProcessor)
+                
+                switch lens {
+                case 1:
+                    self.photoOutput1.capturePhoto(with: photoSettings, delegate: photoCaptureProcessor)
+                case 2:
+                    self.photoOutput2.capturePhoto(with: photoSettings, delegate: photoCaptureProcessor)
+                case 3:
+                    self.photoOutput3.capturePhoto(with: photoSettings, delegate: photoCaptureProcessor)
+                default:
+                    self.photoOutput3.capturePhoto(with: photoSettings, delegate: photoCaptureProcessor)
+                }
+                
+                
+                
                 
                 
             }
