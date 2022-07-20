@@ -11,6 +11,8 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 
 
+//NOTE: The local default configuration does not contain any information on field sites or blocks. These get added and saved after the first time the Config Service connects to the firestore DB remote config file. The wont take photos without that initial connection and site information.
+
 class ConfigService: ObservableObject {
     
     let defaults = UserDefaults.standard
@@ -131,7 +133,6 @@ struct Site: Codable {
 
 struct AppConfig: Codable {
   var id: String?
-  let version: String
   let max_resolution: String
   let jpeg_compression_quality: String
   let frame_rate_seconds: String

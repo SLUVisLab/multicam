@@ -1,6 +1,5 @@
 {
     "id": "config",
-    "version": "0.0.1",
     "max_resolution": "1024",
     "jpeg_compression_quality": "0.8",
     "frame_rate_seconds": "3.0",
