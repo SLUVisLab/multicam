@@ -102,7 +102,7 @@ public class CameraController: NSObject, AVCaptureVideoDataOutputSampleBufferDel
     }
     
     public func configure(fr: Double) {
-        //TODO: Pull framerate from config and not as an argument here
+        //TODO: Pull framerate from config file and not as an argument here
         self.frameRate = fr
         sessionQueue.async {
             self.configureSession()
@@ -448,24 +448,6 @@ public class CameraController: NSObject, AVCaptureVideoDataOutputSampleBufferDel
     }
     
     public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-//        guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return  }
-//        let ciImage = CIImage(cvPixelBuffer: imageBuffer)
-        
-//        switch output {
-//        case camera1VideoDataOutput:
-//            print("camera 1")
-//        case camera2VideoDataOutput:
-//            print("camera 2")
-//        case camera3VideoDataOutput:
-//            print("camera 3")
-//        default:
-//            print("camera unrecognized")
-//        }
-
-//        let context = CIContext()
-//        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return  }
-//
-//        let image = UIImage(cgImage: cgImage)
         if self.isCaptureEnabled {
             processingQueue.async {
                 self.processImage(buffer: sampleBuffer)
@@ -501,7 +483,6 @@ public class CameraController: NSObject, AVCaptureVideoDataOutputSampleBufferDel
             let options = PHAssetResourceCreationOptions()
             let creationRequest = PHAssetCreationRequest.forAsset()
             self.dataService?.photoCollection?.localIdentifiers.append(creationRequest.placeholderForCreatedAsset!.localIdentifier)
-//            options.uniformTypeIdentifier = self.requestedPhotoSettings.processedFileType.map { $0.rawValue }
             creationRequest.addResource(with: .photo, data: img, options: options)
             
             
@@ -510,33 +491,12 @@ public class CameraController: NSObject, AVCaptureVideoDataOutputSampleBufferDel
             if let error = error {
                 print("Error occurred while saving photo to photo library: \(error)")
             }
-            
-//            DispatchQueue.main.async {
-//                self.completionHandler(self)
-//            }
-        }
-        )
-
+        })
     }
     
 
 }
 
-//extension CameraController:  {
-//
-//    public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-//    guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return  }
-//    let ciImage = CIImage(cvPixelBuffer: imageBuffer)
-//
-//    let context = CIContext()
-//    guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return  }
-//
-//    let image = UIImage(cgImage: cgImage)
-//
-//    self.didOutputNewImage(img: image)
-//  }
-
-//}
 
 extension AVCaptureDevice {
     func setFR(frameRate: Double) {

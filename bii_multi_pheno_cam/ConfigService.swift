@@ -114,31 +114,6 @@ class LocalConfigLoader: LocalConfigLoading {
   }
 }
 
-//class RemoteConfigLoader: RemoteConfigLoading {
-//
-//    func fetch() -> AnyPublisher<AppConfig, Error> {
-//        let db = Firestore.firestore()
-//        let docRef = db.collection("config").document("config")
-//          docRef.getDocument{ (document, error) in
-//              if let document = document, document.exists {
-//                      let dataDescription = document.data().map(String.init(describing:)) ?? "nil"
-//                      print("Document data: \(dataDescription)")
-//                  } else {
-//                      print("Document does not exist")
-//                  }
-//          }
-//
-//        let configURL = "config"
-//
-//        return ConfigPublisher(fileURL: configURL)
-//
-//        return URLSession.shared.dataTaskPublisher(for: configUrl)
-//          .map(\.data)
-//          .decode(type: AppConfig.self, decoder: JSONDecoder())
-//          .eraseToAnyPublisher()
-//    }
-//}
-
 protocol LocalConfigLoading {
   func fetch() -> AppConfig
   func persist(_ config: AppConfig)
@@ -160,7 +135,6 @@ struct AppConfig: Codable {
   let max_resolution: String
   let jpeg_compression_quality: String
   let frame_rate_seconds: String
-  let frame_rate_tolerance_seconds: String
   var sites: [Site]?
 }
 

@@ -3,6 +3,5 @@
     "version": "0.0.1",
     "max_resolution": "1024",
     "jpeg_compression_quality": "0.8",
-    "frame_rate_seconds": "1.0",
-    "frame_rate_tolerance_seconds": "0.2"
+    "frame_rate_seconds": "3.0",
 }
