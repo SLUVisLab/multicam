@@ -38,7 +38,6 @@ struct SettingsView: View {
         Form() {
             
             Section(header: Text("Configuration")) {
-                Text("**Version:** \(configService.config.version)")
                 Text("**Frame Rate:** \(configService.config.frame_rate_seconds) s")
                 Text("**Max Resolution:** \(configService.config.max_resolution)")
                 Text("**JPEG Compression:** \(configService.config.jpeg_compression_quality)")
