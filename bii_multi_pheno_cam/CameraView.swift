@@ -10,6 +10,7 @@ import Combine
 import AVFoundation
 import ActivityIndicatorView
 import AVKit
+//import PromisesTestHelpers
 
 final class CameraViewModel: ObservableObject {
     
@@ -70,14 +71,16 @@ final class CameraViewModel: ObservableObject {
         // pulling framerate from the config file and passing to camera controller configuration
         let frameRate: Double
         if config?.config.frame_rate_seconds != nil {
+            print("found config setting for framerate")
             frameRate = Double(config?.config.frame_rate_seconds ?? "3")!
         } else {
+            print("config file not available yet")
             frameRate = 3.0
         }
 
         camera.configure(fr: frameRate)
 
-        //FIX: Not Neccessarily dude...
+        //TODO: Not Neccessarily true dude...
         self.isConfigured = true
     }
     
@@ -110,6 +113,10 @@ final class CameraViewModel: ObservableObject {
         }
         self.selectedSite = sites[selectedSiteIndex].id!
         self.selectedBlock = sites[selectedSiteIndex].blocks[selectedBlockIndex]
+        
+        if !self.isConfigured {
+            configure()
+        }
     }
 }
 
@@ -157,14 +164,16 @@ struct CameraView: View {
             } else {
                 
                 ZStack {
-                    
-                    CameraPreview(session: cameraViewModel.camera.session)
-                        .onAppear {
-                            if !cameraViewModel.isConfigured {
-                                cameraViewModel.configure()
-                            }
-                        }
-                        .animation(.easeInOut)
+                    if cameraViewModel.isConfigured {
+                        CameraPreview(session: cameraViewModel.camera.session)
+                            .animation(.easeInOut)
+                    }
+//                        .onAppear {
+//                            if !cameraViewModel.isConfigured {
+//                                cameraViewModel.configure()
+//                            }
+//                        }
+                        
                     
                     VStack{
                         
@@ -222,11 +231,16 @@ struct CameraView: View {
                         Spacer()
                             
                         Button(){
-                            self.backButtonHidden.toggle()
-                            if(UserDefaults.standard.object(forKey: "soundOnForCapture") as? Bool ?? true) {
-                                audioService.start(track: "sounds/super_mario_1")
+                            if cameraViewModel.isConfigured {
+                                self.backButtonHidden.toggle()
+                                if(UserDefaults.standard.object(forKey: "soundOnForCapture") as? Bool ?? true) {
+                                    audioService.start(track: "sounds/super_mario_1")
+                                }
+                                cameraViewModel.startCapture()
+                            } else {
+                                //TODO: Write alert for when configuration failed
+                                print("Camera configuration failed...")
                             }
-                            cameraViewModel.startCapture()
                             
                         } label: {
                             ZStack{
@@ -248,6 +262,7 @@ struct CameraView: View {
         .navigationBarBackButtonHidden(backButtonHidden)
         // best way I've found to pass env obj from view to view model
         .onAppear{
+            print("passing config from view")
             self.cameraViewModel.setup(config: self.configService)
         }
     }

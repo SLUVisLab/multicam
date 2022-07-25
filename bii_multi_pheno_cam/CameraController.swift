@@ -103,6 +103,7 @@ public class CameraController: NSObject, AVCaptureVideoDataOutputSampleBufferDel
     
     public func configure(fr: Double) {
         //TODO: Pull framerate from config file and not as an argument here
+        print("entered controller configuration method")
         self.frameRate = fr
         sessionQueue.async {
             self.configureSession()
@@ -291,7 +292,6 @@ public class CameraController: NSObject, AVCaptureVideoDataOutputSampleBufferDel
             return false
         }
         
-        print(self.frameRate)
         self.camera2DeviceInput?.device.setFR(frameRate: self.frameRate)
         
         // Find the camera device input's video port
@@ -366,6 +366,8 @@ public class CameraController: NSObject, AVCaptureVideoDataOutputSampleBufferDel
             return false
         }
         
+        print("set fr dev 3")
+        print(self.frameRate)
         self.camera3DeviceInput?.device.setFR(frameRate: self.frameRate)
         
         // Find the camera device input's video port
