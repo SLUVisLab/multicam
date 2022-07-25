@@ -11,10 +11,12 @@ import AVFoundation
 import ActivityIndicatorView
 import AVKit
 
-final class CameraModel: ObservableObject {
+final class CameraViewModel: ObservableObject {
     
     //public var service: CameraService
     public var camera: CameraController
+    
+    let defaults = UserDefaults.standard
     
     var config: ConfigService?
     
@@ -22,11 +24,18 @@ final class CameraModel: ObservableObject {
     
     @Published var isConfigured = false
     
+    // the site and block are pulled from arrays stored in the app config file (updated on app startup from remote DB)
+    // the array index of the last site chosen by the user is stored locally in userDefaults so it "remembers"
+    // userDefaults is updated in the didSet method on the vars below when changed.
+    
     @Published var selectedBlock: String = ""
     
     @Published var selectedSite: String = ""
     
+    @Published var id: UUID = UUID()
+    
     @Published var selectedSiteIndex: Int {
+        //TODO: fix lots of unsafe forced unwrapping here
         didSet {
             print("site changed")
             self.id = UUID()
@@ -45,10 +54,6 @@ final class CameraModel: ObservableObject {
         }
     }
     
-    @Published var id: UUID = UUID()
-    
-    let defaults = UserDefaults.standard
-    
     init() {
         print("Initializing....")
         self.camera = CameraController()
@@ -62,6 +67,7 @@ final class CameraModel: ObservableObject {
         camera.checkForPermissions()
         
         //TODO: write better fallbacks. maybe refactor this out of the view model
+        // pulling framerate from the config file and passing to camera controller configuration
         let frameRate: Double
         if config?.config.frame_rate_seconds != nil {
             frameRate = Double(config?.config.frame_rate_seconds ?? "3")!
@@ -111,7 +117,7 @@ struct CameraView: View {
     
     @EnvironmentObject var configService: ConfigService
 
-    @StateObject var camera = CameraModel()
+    @StateObject var cameraViewModel = CameraViewModel()
     @State private var backButtonHidden = false
     @State var audioService = AudioService()
     
@@ -120,11 +126,11 @@ struct CameraView: View {
             Color.black
                 .ignoresSafeArea(.all)
             
-            if camera.isActive{
+            if cameraViewModel.isActive{
                 VStack{
                     Text("Capture in progress...")
                         .foregroundColor(Color.white)
-                    ActivityIndicatorView(isVisible: $camera.isActive, type: .growingCircle)
+                    ActivityIndicatorView(isVisible: $cameraViewModel.isActive, type: .growingCircle)
                         .foregroundColor(.white)
                         .frame(width: 280, height: 280, alignment: .center)
                     
@@ -135,7 +141,7 @@ struct CameraView: View {
                         if(UserDefaults.standard.object(forKey: "soundOnForCapture") as? Bool ?? true) {
                             audioService.stop()
                         }
-                        camera.stopCapture()
+                        cameraViewModel.stopCapture()
                     } label: {
                         ZStack{
                             Circle()
@@ -152,10 +158,10 @@ struct CameraView: View {
                 
                 ZStack {
                     
-                    CameraPreview(session: camera.camera.session)
+                    CameraPreview(session: cameraViewModel.camera.session)
                         .onAppear {
-                            if !camera.isConfigured {
-                                camera.configure()
+                            if !cameraViewModel.isConfigured {
+                                cameraViewModel.configure()
                             }
                         }
                         .animation(.easeInOut)
@@ -187,17 +193,17 @@ struct CameraView: View {
 //                        .padding()
                         if let sites = configService.config.sites {
                             Form {
-                                Picker("Site ID:", selection: $camera.selectedSiteIndex) {
+                                Picker("Site ID:", selection: $cameraViewModel.selectedSiteIndex) {
                                     ForEach(0 ..< sites.count) { index in
                                         Text(sites[index].id!)
                                     }
                                 }
-                                Picker("Block ID:", selection: $camera.selectedBlockIndex) {
-                                    ForEach(0 ..< sites[camera.selectedSiteIndex].blocks.count) { index in
-                                        Text(sites[camera.selectedSiteIndex].blocks[index])
+                                Picker("Block ID:", selection: $cameraViewModel.selectedBlockIndex) {
+                                    ForEach(0 ..< sites[cameraViewModel.selectedSiteIndex].blocks.count) { index in
+                                        Text(sites[cameraViewModel.selectedSiteIndex].blocks[index])
                                     }
                                 }
-                                .id(camera.id)
+                                .id(cameraViewModel.id)
                             }
                                 .background(Color.clear)
                                 .padding(.top, 1)
@@ -220,7 +226,7 @@ struct CameraView: View {
                             if(UserDefaults.standard.object(forKey: "soundOnForCapture") as? Bool ?? true) {
                                 audioService.start(track: "sounds/super_mario_1")
                             }
-                            camera.startCapture()
+                            cameraViewModel.startCapture()
                             
                         } label: {
                             ZStack{
@@ -234,7 +240,7 @@ struct CameraView: View {
                             }
                         }
                             .padding(.bottom, 20)
-                            .disabled(camera.selectedSite.isEmpty || camera.selectedBlock.isEmpty)
+                            .disabled(cameraViewModel.selectedSite.isEmpty || cameraViewModel.selectedBlock.isEmpty)
                     }
                 }
             }
@@ -242,13 +248,13 @@ struct CameraView: View {
         .navigationBarBackButtonHidden(backButtonHidden)
         // best way I've found to pass env obj from view to view model
         .onAppear{
-            self.camera.setup(config: self.configService)
+            self.cameraViewModel.setup(config: self.configService)
         }
     }
     
     // Make the button gray when it's disabled
     var buttonColor: Color {
-        return camera.selectedSite.isEmpty || camera.selectedBlock.isEmpty ? .gray : .white
+        return cameraViewModel.selectedSite.isEmpty || cameraViewModel.selectedBlock.isEmpty ? .gray : .white
     }
 }
 
