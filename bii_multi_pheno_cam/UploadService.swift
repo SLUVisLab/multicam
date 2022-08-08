@@ -163,7 +163,8 @@ public class UploadService: ObservableObject {
                             let fileRef = imagesRef.child(filename)
                             
                             if let imageData = UIImage(data: data) {
-                                let targetSize = CGSize(width: 400 , height: 400)
+                                let targetSize = CGSize(width: max_resolution , height: max_resolution)
+                                //scalePreservingAspectRatio extension defined below
                                 let resizedImage = imageData.scalePreservingAspectRatio(targetSize: targetSize)
                                 if let jpegImage = resizedImage.jpegData(compressionQuality: jpeg_compression) {
                                 let uploadTask = fileRef.putData(jpegImage, metadata: nil) { (metadata, error) in
@@ -332,11 +333,16 @@ struct sessionData {
 
 extension UIImage {
     func scalePreservingAspectRatio(targetSize: CGSize) -> UIImage {
-        // Determine the scale factor that preserves aspect ratio
-        let widthRatio = targetSize.width / size.width
-        let heightRatio = targetSize.height / size.height
+        //convert pixel value to point value based on device scale
+        let pointWidth = targetSize.width / UIScreen.main.scale
+        let pointHeight = targetSize.height / UIScreen.main.scale
         
+        // Determine the scale factor that preserves aspect ratio
+        let widthRatio = pointWidth / size.width
+        let heightRatio = pointHeight / size.height
         let scaleFactor = min(widthRatio, heightRatio)
+        print(UIScreen.main.scale)
+        
         
         // Compute the new image size that preserves aspect ratio
         let scaledImageSize = CGSize(

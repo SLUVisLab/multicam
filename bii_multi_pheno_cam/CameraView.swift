@@ -164,15 +164,15 @@ struct CameraView: View {
             } else {
                 
                 ZStack {
-                    if cameraViewModel.isConfigured {
-                        CameraPreview(session: cameraViewModel.camera.session)
-                            .animation(.easeInOut)
-                    }
-//                        .onAppear {
-//                            if !cameraViewModel.isConfigured {
-//                                cameraViewModel.configure()
-//                            }
-//                        }
+                    
+                    //TODO: Fix camera preview
+                    // Leaving this disabled for now because it only partially works.
+                    // isConfigured doesnt accurately reflect the state of the camera session, so this element shows up before it's ready. It will show up AFTER taking an initial set of photos.
+                    // The other issue is that with the slow framerate, the video appears super choppy.
+//                    if cameraViewModel.isConfigured {
+//                        CameraPreview(session: cameraViewModel.camera.session)
+//                            .animation(.easeInOut)
+//                    }
                         
                     
                     VStack{
