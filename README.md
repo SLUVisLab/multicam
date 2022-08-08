@@ -1,7 +1,6 @@
 # BII Multi-Camera Phenotype Capture for iOS
-![Cocoapods platforms](https://img.shields.io/cocoapods/p/ios)
 
-Iceland snackwave narwhal glossier lomo vexillologist +1 butcher offal hell of. Literally lomo 3 wolf moon chicharrones, vegan enamel pin +1 aesthetic biodiesel organic wayfarers four loko. Gochujang keffiyeh lumbersexual bitters, twee semiotics you probably haven't heard of them intelligentsia. Truffaut put a bird on it chambray mixtape narwhal YOLO cold-pressed post-ironic neutra knausgaard church-key chartreuse.
+This Multi-Camera app uses all three front-facing iphone cameras to near-simultaneously record streams of photos and upload them to the cloud.
 
 
 ## Contents
@@ -25,9 +24,11 @@ The main screen of the app contains three options: 1) **Capture** for opening th
 
 ![Taking photos](demo/start-recording.gif)
 
-In order to start the camera you will first need to use the text inputs to enter the field site and block/plot id what you are about to take photos of. Once you've input a field site ID the app should remember it for next time. 
+In order to start the camera, you will need to use the text inputs to enter the field site and block/plot id that you want to take photos of. Once you've input a field site ID the app should remember it for next time. 
 
 Once you've filled out the text fields, the record button at the bottom of the screen should be white to incdicate it is enabled. After pressing the record button the app will start taking photos continuously at a set framerate using multiple device cameras. The screen should show an animation indicating that photo capture is in progress.
+
+If enabled, a sound will also play while photo capture is in progress. This can be disabled from the settings screen.
 
 To stop recording, hit the record button again. Voila! You've taken a bunch of photos! 
 
@@ -42,7 +43,7 @@ To see the individual photos included in a recording session, just click on the 
 
 To upload or delete recording sessions, enter gallery selection mode by clicking the **Select** button in the top right corner. You can now select individual or multiple recording sessions and use the **Delete** or **Upload** buttons at the botton of the view to perform those actions.
 
-**NOTE:** Recording sessions are automatically deleted after they are uploaded!
+**NOTE:** Recording sessions are automatically deleted after they are uploaded! This can be disabled in the **Settings** view.
 
 **On Deleting Recording Sessions:** The photos taken using this app are stored the natiuve iOS Photos Library. If you delete photos using the standard Photos app, it can corrupt the references used internally by this app. We reccomend only using this app to delete photos associated with it. If you do run into issues with this, see the next section: [Configuration and Troubleshooting](https://github.com/SLUVisLab/bii_multi_pheno_cam#configuration-and-troubleshooting)
 
@@ -53,17 +54,13 @@ To upload or delete recording sessions, enter gallery selection mode by clicking
 
 The app is packaged with a default configuration for things like camera framerate, size of uploaded images, and pre-defined lists of available field sites and plots. It also checks the cloud database for an updated configuration file on startup and saves it locally for future use. You can see the configuration values from the **Settings** view and also manually check for a new configuration file using the provided button.
 
-The firebase config schema includes a nested documenet containing available field site and plot (block) information that users can select from before recording images. This is not included in the default config.json file however the app will not be able to record if selections aren't available from the remote config. **This also means that the app needs to have been loaded at least once while connected a network before it will be ready for recording!**
-
-**version:** configuration version
+The firebase config schema includes a nested documenet containing available field site and plot (block) information that users can select from before recording images. This is not included in the default config.json file however. The app will not be able to record if selections aren't available from the remote config. **This means that the app needs to have been loaded at least once while connected a network before it will be ready for recording!**
 
 **max_resolution:** The maximum resolution of the largest dimension of an image to be uploaded
 
 **jpeg_compression_quality:** Downsamples raw image data when it is converted to .jpeg format for uploading. 1.0 is highest quality.
 
-**frame_rate_seconds:** The interval in seconds between image captures. All three cameras fire near concurrently at this interval
-
-**frame_rate_tolerance_seconds:** A margin of error for the image capture timer. Helps ensure smooth operation.
+**frame_rate_seconds:** The interval in seconds between image captures. This is the framerate for **each individual camera**. So a framerate of 3 means each camera is firing at 3 frames per second.
 
 
 Sample config.json file and firebase document schema:
@@ -71,11 +68,10 @@ Sample config.json file and firebase document schema:
 ```
 {
     "id": "config",
-    "version": "0.0.1",
     "max_resolution": "1024",
     "jpeg_compression_quality": "0.8",
     "frame_rate_seconds": "1.0",
-    "frame_rate_tolerance_seconds": "0.2"
+
 }
 
 ```
@@ -102,20 +98,11 @@ The app requires two cloud services from google to run:
 You'll need to include a `GoogleService-Info.plist` file in the root directory of the project. The Firebase SDKs will use this for authenticating with cloud services. You find setup instructions here: [Add Firebase to your Apple Project](https://firebase.google.com/docs/ios/setup)
 
 
-### Accessing Data
-
-WIP
-
-
-## Tech Stack and Codebase
-
-WIP
-
 
 ## Resources
 
-Camera capture code inspired by:
-[Better Programming effortless-swiftui-camera](https://betterprogramming.pub/effortless-swiftui-camera-d7a74abde37e)
+Camera capture code inspired by WWDC '19 project:
+https://developer.apple.com/documentation/avfoundation/capture_setup/avmulticampip_capturing_from_multiple_cameras
 
 [MongoDB Realm Swift SDK Docs](https://docs.mongodb.com/realm/sdk/swift/)
 
