@@ -73,7 +73,31 @@ public class UploadService: ObservableObject {
             
             counter += combinedPhotoReferences.count
             keyValue += 1
+            
+            // upload individual session data to firestore
+            var sessionRef: DocumentReference? = nil
+            sessionRef = db.collection("sessions").addDocument(data: [
+                "siteId" : data.siteId,
+                "blockId" : data.blockId,
+                "sessionId" : data.sessionId,
+                "sessionStart" : Timestamp(date: data.sessionStart),
+                "sessionStop" : Timestamp(date: data.sessionStop),
+                "imageCount": session.photoReferences.count
 
+            ]) { err in
+                if let err = err {
+                    //TODO: Error writing to firestore
+                    print("Error writing session to firestore")
+                    print(err)
+                    self.isUploading = false
+                    self.statusMessage = "Error writing session to firestore"
+                    
+                } else {
+                    // Successfully wrote document to firestore
+                    print("Successfully wrote session document to firestore!")
+                    
+                }
+            }
         }
                  
             var fetchResults = PHAsset.fetchAssets(withLocalIdentifiers: combinedPhotoReferences, options: nil)
