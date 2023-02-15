@@ -35,6 +35,9 @@ public class UploadService: ObservableObject {
         let imagesRef = reference.child("images")
         let dispatchGroup = DispatchGroup()
         
+        let jpegConversionContext = CIContext(options: nil)
+        let jpegConversionColorSpace = CGColorSpaceCreateDeviceRGB();
+        
         var imageUrl: URL?
         //var creationDate: Date?
         
@@ -154,8 +157,8 @@ public class UploadService: ObservableObject {
                             dateFormatter.timeZone = TimeZone.current
                             dateFormatter.locale = Locale.current
                             
-                            if let ciImage = CIImage(data: data) {
-                                if let exif = ciImage.properties["{Exif}"] as? [String:Any] {
+                            if let wrappedImage = CIImage(data: data) {
+                                if let exif = wrappedImage.properties["{Exif}"] as? [String:Any] {
                                     if let timeStamp = exif["DateTimeOriginal"] as? String {
                                         creationDate = dateFormatter.date(from: timeStamp)
                                         let timeStampNoSpace = timeStamp.replacingOccurrences(of: " ", with: "T")
@@ -174,90 +177,79 @@ public class UploadService: ObservableObject {
                                     //TODO: Could not find EXIF Data
                                     print("Error: No EXIF Data found")
                                 }
-                                print("********************************************")
+                                
+                                let rand = String(Int.random(in: 100..<1000))
+                                filename += String(sessionDataDictionary[keyMap[i]!]!.siteId) + "_" + String(sessionDataDictionary[keyMap[i]!]!.blockId) + "_" + rand + ".jpeg"
+                                print(filename)
+                                
+                                let fileRef = imagesRef.child(filename)
+                                
+                                if let jpegImage = jpegConversionContext.jpegRepresentation(of: wrappedImage, colorSpace: jpegConversionColorSpace, options: [:]) {
+                                
+                                    let uploadTask = fileRef.putData(jpegImage, metadata: nil) { (metadata, error) in
+                                        guard let metadata = metadata else {
+                                            // TODO: Error uploading jpeg to Firebase Storage
+                                            print("Error uploading jpeg to Firebase Storage")
+                                            dispatchGroup.leave()
+                                            return
+                                        }
+                                        //successful upload!
+                                        fileRef.downloadURL { (url, error) in
+                                            guard let url = url else {
+                                              // TODO: Error retrieving jpeg url
+                                                print("Error retrieving jpeg url")
+                                                dispatchGroup.leave()
+                                              return
+                                            }
+                                            //successfully got resource url
+                                            imageUrl = url
+                                            var ref: DocumentReference? = nil
+                                            ref = db.collection("images").addDocument(data: [
+                                                "siteId" : sessionDataDictionary[keyMap[i]!]!.siteId,
+                                                "blockId" : sessionDataDictionary[keyMap[i]!]!.blockId,
+                                                "sessionId" : sessionDataDictionary[keyMap[i]!]!.sessionId,
+                                                "sessionStart" : Timestamp(date: sessionDataDictionary[keyMap[i]!]!.sessionStart),
+                                                "sessionStop" : Timestamp(date: sessionDataDictionary[keyMap[i]!]!.sessionStop),
+                                                "creationDate" : Timestamp(date: creationDate!),
+                                                "lensModel" : lensModel,
+                                                "url" : imageUrl!.absoluteString
+                                            ]) { err in
+                                                if let err = err {
+                                                    //TODO: Error writing to firestore
+                                                    print("Error writing to firestore")
+                                                    print(err)
+                                                    self.isUploading = false
+                                                    self.statusMessage = "Error writing to firestore"
+                                                    dispatchGroup.leave()
+                                                    
+                                                } else {
+                                                    // Successfully wrote document to firestore
+                                                    dispatchGroup.leave()
+                                                    print("Successfully wrote document to firestore!")
+                                                }
+                                            }
+                                        }
+                                    }
+                                
+                                } else {
+                                    print("Error: Failed to convert to jpeg")
+                                    dispatchGroup.leave()
+                                    return
+                                }
+                                
                             } else {
                                 //TODO: CI Image conversion failed
                                 print("Error: Failed to convert data object to CIImage")
                             }
                             
-                            let rand = String(Int.random(in: 100..<1000))
-                            filename += String(sessionDataDictionary[keyMap[i]!]!.siteId) + "_" + String(sessionDataDictionary[keyMap[i]!]!.blockId) + "_" + rand + ".jpeg"
-                            print(filename)
-                            
-                            let fileRef = imagesRef.child(filename)
-                            
-                            if let imageData = UIImage(data: data) {
-                                let targetSize = CGSize(width: max_resolution , height: max_resolution)
-                                //scalePreservingAspectRatio extension defined below
-                                let resizedImage = imageData.scalePreservingAspectRatio(targetSize: targetSize)
-                                if let jpegImage = resizedImage.jpegData(compressionQuality: jpeg_compression) {
-                                let uploadTask = fileRef.putData(jpegImage, metadata: nil) { (metadata, error) in
-                                    guard let metadata = metadata else {
-                                        // TODO: Error uploading jpeg to Firebase Storage
-                                        print("Error uploading jpeg to Firebase Storage")
-                                        dispatchGroup.leave()
-                                        return
-                                    }
-                                    //successful upload!
-                                    fileRef.downloadURL { (url, error) in
-                                        guard let url = url else {
-                                          // TODO: Error retrieving jpeg url
-                                            print("Error retrieving jpeg url")
-                                            dispatchGroup.leave()
-                                          return
-                                        }
-                                        //successfully got resource url
-                                        imageUrl = url
-                                        var ref: DocumentReference? = nil
-                                        ref = db.collection("images").addDocument(data: [
-                                            "siteId" : sessionDataDictionary[keyMap[i]!]!.siteId,
-                                            "blockId" : sessionDataDictionary[keyMap[i]!]!.blockId,
-                                            "sessionId" : sessionDataDictionary[keyMap[i]!]!.sessionId,
-                                            "sessionStart" : Timestamp(date: sessionDataDictionary[keyMap[i]!]!.sessionStart),
-                                            "sessionStop" : Timestamp(date: sessionDataDictionary[keyMap[i]!]!.sessionStop),
-                                            "creationDate" : Timestamp(date: creationDate!),
-                                            "lensModel" : lensModel,
-                                            "url" : imageUrl!.absoluteString
-                                        ]) { err in
-                                            if let err = err {
-                                                //TODO: Error writing to firestore
-                                                print("Error writing to firestore")
-                                                print(err)
-                                                self.isUploading = false
-                                                self.statusMessage = "Error writing to firestore"
-                                                dispatchGroup.leave()
-                                                
-                                            } else {
-                                                // Successfully wrote document to firestore
-                                                dispatchGroup.leave()
-                                                print("Successfully wrote document to firestore!")
-                                                
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                // TODO: Error converting to JPEG
-                                print("Error: Unable to convert UIImage to JPEG")
-                                self.isUploading = false
-                                self.statusMessage = "Error: Unable to convert UIImage to JPEG"
-                                dispatchGroup.leave()
-                            }
                         } else {
-                            // TODO: Error converting to UI Image
-                            print("Error: Unable to convert Data to UIImage")
+                            // TODO: Error retrieving image from photos
+                            print("Error: Unable to retrieve image from Photos")
                             self.isUploading = false
-                            self.statusMessage = "Error: Unable to convert Data to UIImage"
+                            self.statusMessage = "Error: Unable to retrieve image from Photos"
                             dispatchGroup.leave()
                         }
-                    } else {
-                        // TODO: Error retrieving image from photos
-                        print("Error: Unable to retrieve UIImage for upload")
-                        self.isUploading = false
-                        self.statusMessage = "Error: Unable to retrieve UIImage for upload"
-                        dispatchGroup.leave()
-                    }
-                })
+                    })
                     
                     
 // ****** Below is the original upload code which used the largest available image size that PHImageManager could provide. It's been replaced by the above code which allows for variable size and quality. Leaving here for reference for now *************
