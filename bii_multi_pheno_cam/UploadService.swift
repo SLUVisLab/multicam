@@ -244,9 +244,9 @@ public class UploadService: ObservableObject {
                             
                         } else {
                             // TODO: Error retrieving image from photos
-                            print("Error: Unable to retrieve UIImage for upload")
+                            print("Error: Unable to retrieve image from Photos")
                             self.isUploading = false
-                            self.statusMessage = "Error: Unable to retrieve UIImage for upload"
+                            self.statusMessage = "Error: Unable to retrieve image from Photos"
                             dispatchGroup.leave()
                         }
                     })
